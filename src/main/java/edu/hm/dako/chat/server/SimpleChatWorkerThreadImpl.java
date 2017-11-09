@@ -437,6 +437,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 				// Chat-Nachricht angekommen, an alle verteilen
 				chatMessageRequestAction(receivedPdu);
 				break;
+				
+		//case --> Chat Nachricht bei Client angekommen, hochzählen Anzahl Clients (Länge von Vektor sendList?)
 
 			case LOGOUT_REQUEST:
 				// Logout-Request vom Client empfangen

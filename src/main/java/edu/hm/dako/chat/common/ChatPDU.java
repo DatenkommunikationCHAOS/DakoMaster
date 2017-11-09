@@ -39,6 +39,32 @@ public class ChatPDU implements Serializable {
 
 	// Nutzdaten (eigentliche Chat-Nachricht in Textform)
 	private String message;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// Liste aller angemeldeten User
 	private Vector<String> clients;

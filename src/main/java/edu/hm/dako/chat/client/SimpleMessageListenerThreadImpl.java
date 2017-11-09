@@ -208,7 +208,7 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 						// Chat-Nachricht vom Server gesendet
 						chatMessageEventAction(receivedPdu);
 						break;
-
+				
 					default:
 						log.debug("Ankommende PDU im Zustand " + sharedClientData.status
 								+ " wird verworfen");
@@ -225,12 +225,17 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 						// Server bestaetigt.
 						chatMessageResponseAction(receivedPdu);
 						break;
+					
 
 					case CHAT_MESSAGE_EVENT:
-						// Chat-Nachricht vom Server gesendet
+						// Chat-Nachricht vom Server gesendet --> nicht die eigene sondern eine andere von einem anderen Client
 						chatMessageEventAction(receivedPdu);
 						break;
-
+						
+					//todo: 
+					//case --> anderer Client hat Nachricht bekommen 
+						
+						
 					case LOGIN_EVENT:
 						// Meldung vom Server, dass sich die Liste der
 						// angemeldeten User erweitert hat
