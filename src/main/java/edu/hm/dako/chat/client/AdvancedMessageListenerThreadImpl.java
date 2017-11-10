@@ -135,8 +135,12 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                     + " passt nicht: " + receivedPdu.getSequenceNumber() + "/"
                     + sharedClientData.messageCounter.get());
         }
-    }
+    
 
+
+        
+        
+}
     @Override
     protected void chatMessageEventAction(ChatPDU receivedPdu) {
 
@@ -148,7 +152,22 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         int events = SharedClientData.messageEvents.incrementAndGet();
 
         log.debug("MessageEventCounter: " + events);
-
+        
+        
+        //created ConfirmPDU und sendet diese weiter AL
+          
+              ChatPDU ConfirmPDU = ChatPDU.createChatMessageEventPdu(sharedClientData.userName,
+                      receivedPdu);
+              
+              try {
+                  connection.send(ConfirmPDU);
+                  //Liste durchgehen und an jeden einzelnen senden
+              } catch (Exception e) {
+                  System.out.println("Confirm nicht möglich");
+                  //throw new IO Exception
+                 
+              }
+              
         // Empfangene Chat-Nachricht an User Interface zur
         // Darstellung uebergeben
         userInterface.setMessageLine(receivedPdu.getEventUserName(),
@@ -313,30 +332,10 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                 + sharedClientData.userName + ", Status: " + sharedClientData.status);
     } // run
     
-    public void Test (ChatPDU receivedPDU) {
+   
         
+
         
-//created responsePDU und sendet diese weiter
-        //todo: "warten" bis alle confirms reinkommen 
-        
-        
-            ChatPDU ConfirmPDU = ChatPDU.createChatMessageEventPdu(sharedClientData.userName,
-                    receivedPDU);
-            
-            try {
-                connection.send(ConfirmPDU);
-                //Liste durchgehen und an jeden einzelnen senden
-            } catch (Exception e) {
-                System.out.println("Confirm nicht möglich");
-                //throw new IO Exception
-               
-            }
-            
-            //Nachricht Weitersenden ans Interface
-            userInterface.setMessageLine(receivedPDU.getUserName(),(String) receivedPDU.getMessage());
-            
-            
-        }
 
 }
 
