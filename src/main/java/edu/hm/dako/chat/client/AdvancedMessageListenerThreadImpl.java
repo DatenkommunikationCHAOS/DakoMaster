@@ -162,7 +162,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
               try {
                   connection.send(ConfirmPDU);
                   //Liste durchgehen und an jeden einzelnen senden AL
-                  sharedClientData.confirmCounter.getAndIncrement();
+                  //sharedClientData.confirmCounter.getAndIncrement(); funktioniert nicht
               } catch (Exception e) {
                   System.out.println("Confirm nicht möglich");
                   //throw new IO Exception
