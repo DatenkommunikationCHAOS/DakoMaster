@@ -342,7 +342,33 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         
 
         
+    protected void loginConfirmAction(ChatPDU receivedPdu) {
+        ChatPDU confirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName,
+                receivedPdu);
 
+        try {
+            connection.send(confirmPdu);
+            log.debug("Login-Confirm-PDU fuer Client " + sharedClientData.userName
+                    + " an Server gesendet");
+        } catch (Exception e) {
+            ExceptionHandler.logException(e);
+        }
+    }
+    
+
+    
+    protected void sendlogoutConfirm(ChatPDU receivedPdu) {
+        ChatPDU ConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName,
+                receivedPdu);
+
+        try {
+            connection.send(ConfirmPdu);
+            log.debug("Logout-Confirm-PDU fuer Client " + sharedClientData.userName
+                    + " an Server gesendet");
+        } catch (Exception e) {
+            ExceptionHandler.logException(e);
+        }
+    }
 }
 
 

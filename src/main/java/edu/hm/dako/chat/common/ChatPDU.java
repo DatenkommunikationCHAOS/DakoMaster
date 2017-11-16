@@ -489,14 +489,29 @@ public class ChatPDU implements Serializable {
 	
 	//AL neue Confirm PDU erstellen
 	
-	public static ChatPDU createMessageConfirmPdu(ChatPDU receivedPdu) {
+	public static ChatPDU createMessageConfirmPdu(String username, ChatPDU receivedPdu) {
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.CHAT_MESSAGE_RESPONSE_CONFIRM);
-		pdu.setServerThreadName(Thread.currentThread().getName());
-		pdu.setClientThreadName(receivedPdu.getClientThreadName());
-		pdu.setUserName(receivedPdu.getUserName());
+		pdu.setClientThreadName(Thread.currentThread().getName());
+		pdu.setServerThreadName(receivedPdu.getServerThreadName());
+		pdu.setUserName(username);
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
+		pdu.setEventUserName(receivedPdu.getEventUserName());
 		return pdu;
 		
 	}
+	
+	
+
+    public static ChatPDU createLoginEventConfirm(String userName2,
+            ChatPDU receivedPdu) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public static ChatPDU createLogoutEventConfirm(String userName2,
+            ChatPDU receivedPdu) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

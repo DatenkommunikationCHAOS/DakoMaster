@@ -108,6 +108,10 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             Thread.currentThread().setName(receivedPdu.getUserName());
             log.debug("Laenge der Clientliste: " + clients.size());
             serverGuiInterface.incrNumberOfLoggedInClients();
+            
+            //AL Waitlist erstellen mit allen Clients
+            clients.createWaitList(userName);
+
 
             // Login-Event an alle Clients (auch an den gerade aktuell
             // anfragenden) senden
@@ -148,6 +152,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         }
     }
 
+   
     @Override
     protected void logoutRequestAction(ChatPDU receivedPdu) {
 
@@ -471,40 +476,47 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         }
     }
 
-    //Methode um Messages zu confirmen, sendet eine confirm PDU an die CLients, nachdem er sie aus der Liste gelöscht hat,not finished AL
+    //Methode um Messages zu confirmen, sendet eine confirm PDU an die CLients, nachdem er sie aus der Liste gelöscht hat AL
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {	
-		ClientListEntry client = null;
-		
-		// TODO Auto-generated method stub
+
+	        clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
+	        confirmCounter.getAndIncrement();
+	        log.debug("Chat Message Confirm PDU von " + receivedPdu.getEventUserName() + " für User " + receivedPdu.getUserName() + " empfangen.");
+
+
+	        try {
+	            //lösche clients aus Waitlist AL
+	            clients.deleteWaitListEntry(receivedPdu.getEventUserName(), receivedPdu.getUserName());
+	            //Wenn Waitlist aus 0, dann.... AL
+	            if (clients.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
+	                //bekomme die Liste aller Clients
+	                ClientListEntry clientList = clients.getClient(receivedPdu.getEventUserName());
+	                //testen ob überhaupt Clients vorhanden AL
+	                if (clientList != null) {
+	                    //erstelle response PDU AL
+	                    ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(
+	                            receivedPdu.getUserName(), 0, 0, 0, 0,
+	                            clientList.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+	                            (System.nanoTime() - clientList.getStartTime()));
+
+	                    try {
+	                        //sende response PDU AL
+	                        clientList.getConnection().send(responsePdu);
+	                    } catch (Exception e) {
+	                        ExceptionHandler.logExceptionAndTerminate(e);
+	                    }
+	                }
+	            }
+	        } catch (Exception e) {
+	            ExceptionHandler.logException(e);
+	        }
+	    }
+
+
+         
 	
-		if (!clients.existsClient(receivedPdu.getUserName())) {
-            log.debug("User nicht in Clientliste: " + receivedPdu.getUserName());
-        } else {
-            // Liste der betroffenen Clients ermitteln
-            Vector<String> sendList = clients.getClientNameList();
-            ChatPDU pdu = ChatPDU.createMessageConfirmPdu(receivedPdu);
-            //hier muss er irgendwo die bekommene Response abrufen??
-            
-            
-            //an Clients senden
-            while(sendList.size() != 0) {
-            for (String s : new Vector<String>(sendList)) {
-                client = clients.getClient(s);
-              
-                try {
-					client.getConnection().send(pdu);
-					sendList.remove(client.getUserName());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                
-            } 
-            
-                
-        }
-	}
-    
-    
+
 }
-}
+    
+
+

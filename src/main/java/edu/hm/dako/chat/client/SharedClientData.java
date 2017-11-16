@@ -21,7 +21,6 @@ public class SharedClientData {
 
 	// Zaehler fuer gesendete Chat-Nachrichten des Clients
 	public AtomicInteger messageCounter;
-	public AtomicInteger confirmCounter;
 
 	// Zaehler fuer Logouts, empfangene Events und Confirms fuer
 	// Testausgaben
@@ -33,4 +32,6 @@ public class SharedClientData {
 	public static AtomicInteger logoutEvents = new AtomicInteger(0);
 	public static AtomicInteger loginEvents = new AtomicInteger(0);
 	public static AtomicInteger messageEvents = new AtomicInteger(0);
+	public AtomicInteger confirmCounter;
+
 }
