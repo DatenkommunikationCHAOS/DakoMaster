@@ -441,15 +441,25 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         //case --> Chat Nachricht bei Client angekommen, hochzählen Anzahl Clients (Länge von Vektor sendList?)
 
                 
-//                case CHAT_MESSAGE_RESPONSE_CONFIRM :
-//                    // chat Nachricht beim Client angekommen
-//                    chatMessageRequestAction(receivedPdu);
+                case CHAT_MESSAGE_RESPONSE_CONFIRM :
+                    // chat Nachricht beim Client angekommen
+                    chatMessageConfirmAction(receivedPdu);
             
             case LOGOUT_REQUEST:
                 // Logout-Request vom Client empfangen
                 logoutRequestAction(receivedPdu);
                 break;
 
+//            case LOGIN_CONFIRM:
+//            	// Login-Confirm von Client empfangen
+//            	loginConfirmAction(receivedPdu);
+//            	break;
+                
+//              case LOGOUT_CONFIRM:
+//            	// Login-Confirm von Client empfangen
+//            	logoutConfirmAction(receivedPdu);
+//            	break;
+                
             default:
                 log.debug("Falsche PDU empfangen von Client: " + receivedPdu.getUserName()
                         + ", PduType: " + receivedPdu.getPduType());
@@ -460,6 +470,41 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             ExceptionHandler.logExceptionAndTerminate(e);
         }
     }
+
+    //Methode um Messages zu confirmen, sendet eine confirm PDU an die CLients, nachdem er sie aus der Liste gelöscht hat,not finished AL
+	private void chatMessageConfirmAction(ChatPDU receivedPdu) {	
+		ClientListEntry client = null;
+		
+		// TODO Auto-generated method stub
+	
+		if (!clients.existsClient(receivedPdu.getUserName())) {
+            log.debug("User nicht in Clientliste: " + receivedPdu.getUserName());
+        } else {
+            // Liste der betroffenen Clients ermitteln
+            Vector<String> sendList = clients.getClientNameList();
+            ChatPDU pdu = ChatPDU.createMessageConfirmPdu(receivedPdu);
+            //hier muss er irgendwo die bekommene Response abrufen??
+            
+            
+            //an Clients senden
+            while(sendList.size() != 0) {
+            for (String s : new Vector<String>(sendList)) {
+                client = clients.getClient(s);
+              
+                try {
+					client.getConnection().send(pdu);
+					sendList.remove(client.getUserName());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                
+            } 
+            
+                
+        }
+	}
     
     
+}
 }

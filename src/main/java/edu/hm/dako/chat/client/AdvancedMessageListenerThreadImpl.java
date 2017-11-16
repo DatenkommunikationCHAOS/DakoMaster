@@ -161,7 +161,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
               
               try {
                   connection.send(ConfirmPDU);
-                  //Liste durchgehen und an jeden einzelnen senden
+                  //Liste durchgehen und an jeden einzelnen senden AL
+                  sharedClientData.confirmCounter.getAndIncrement();
               } catch (Exception e) {
                   System.out.println("Confirm nicht möglich");
                   //throw new IO Exception
@@ -244,6 +245,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         // Server bestaetigt.
                         chatMessageResponseAction(receivedPdu);
                         break;
+                        
+                   
                     
 
                     case CHAT_MESSAGE_EVENT:
@@ -252,9 +255,12 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         break;
                         
                     //todo: 
-                    //case --> anderer Client hat Nachricht bekommen 
+                    //case --> anderer Client hat Nachricht bekommen AL
                         
-                        
+//                    case CHAT_MESSAGE_RESPONSE_CONFIRM:
+//                    	chatMessageEventAction(receivedPdu);
+//                    	break;
+                    	
                     case LOGIN_EVENT:
                         // Meldung vom Server, dass sich die Liste der
                         // angemeldeten User erweitert hat

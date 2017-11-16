@@ -15,7 +15,12 @@ public enum PduType {
     CHAT_MESSAGE_RESPONSE(6, "Chat-Message-Response"),
     CHAT_MESSAGE_EVENT(7, "Chat-Message-Event"),
     LOGIN_EVENT(8, "Login-Event"),
-    LOGOUT_EVENT(9, "Logout-Event");
+    LOGOUT_EVENT(9, "Logout-Event"),
+    CHAT_MESSAGE_RESPONSE_CONFIRM(10, "Confirm Event"),
+	LOGOUT_CONFIRM(11, "Logout-Confirm-Event"),
+	LOGIN_CONFIRM(12,"Login-Confirm-Event");
+	
+	
     
 
     private final int id;
