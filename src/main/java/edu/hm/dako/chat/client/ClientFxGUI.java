@@ -33,7 +33,7 @@ public class ClientFxGUI extends Application implements ClientUserInterface {
 	private Stage stage;
 	private static LogInGuiController lc;
 	private static LoggedInGuiController lc2;
-	private ClientImpl communicator;
+	private AdvancedClientImpl communicator;
 	private ClientModel model = new ClientModel();
 
 	public static void main(String[] args) {
@@ -53,13 +53,13 @@ public class ClientFxGUI extends Application implements ClientUserInterface {
 	 *          Hostname oder IP-Adresse des Servers
 	 * @return Referenz auf Kommunikationsobjekt
 	 */
-	public ClientImpl createCommunicator(String serverType, int port, String host) {
+	public AdvancedClientImpl createCommunicator(String serverType, int port, String host) {
 
-		communicator = new ClientImpl(this, port, host, serverType);
+		communicator = new AdvancedClientImpl(this, port, host, serverType);
 		return communicator;
 	}
 
-	public ClientImpl getCommunicator() {
+	public AdvancedClientImpl getCommunicator() {
 		return communicator;
 	}
 

@@ -501,15 +501,15 @@ public class ChatPDU implements Serializable {
 		
 	}
 	
-	
+	// Methode für Login und Logout 
 
-    public static ChatPDU createLoginEventConfirm(String userName2,
+    public static ChatPDU createLoginEventConfirm(String userName,
             ChatPDU receivedPdu) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public static ChatPDU createLogoutEventConfirm(String userName2,
+    public static ChatPDU createLogoutEventConfirm(String userName,
             ChatPDU receivedPdu) {
         // TODO Auto-generated method stub
         return null;

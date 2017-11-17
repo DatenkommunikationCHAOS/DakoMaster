@@ -32,6 +32,7 @@ public class SharedClientData {
 	public static AtomicInteger logoutEvents = new AtomicInteger(0);
 	public static AtomicInteger loginEvents = new AtomicInteger(0);
 	public static AtomicInteger messageEvents = new AtomicInteger(0);
-	public AtomicInteger confirmCounter;
+	//AL confirm counter 
+	public AtomicInteger confirmCounter = new AtomicInteger(0);
 
 }

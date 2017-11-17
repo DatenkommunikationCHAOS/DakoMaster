@@ -3,12 +3,7 @@ package edu.hm.dako.chat.client;
 import edu.hm.dako.chat.common.ExceptionHandler;
 
 public class AdvancedClientImpl extends AbstractChatClient {
-    
     /**
-     * Kopie von ClientImpl für Advanced Klassen
-     * 
-     * 
-     * 
      * Konstruktor
      * 
      * @param userInterface
@@ -18,7 +13,7 @@ public class AdvancedClientImpl extends AbstractChatClient {
      * @param remoteServerAddress
      *          IP-Adresse/Hostname des Servers
      */
-    
+
     public AdvancedClientImpl(ClientUserInterface userInterface, int serverPort,
             String remoteServerAddress, String serverType) {
 

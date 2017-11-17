@@ -476,13 +476,13 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
         }
     }
 
-    //Methode um Messages zu confirmen, sendet eine confirm PDU an die CLients, nachdem er sie aus der Liste gelöscht hat AL
+    //Methode um Messages zu confirmen, sendet eine responsePDU an die CLients, nachdem er sie aus der Liste gelöscht hat AL
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {	
 
 	        clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 	        confirmCounter.getAndIncrement();
 	        log.debug("Chat Message Confirm PDU von " + receivedPdu.getEventUserName() + " für User " + receivedPdu.getUserName() + " empfangen.");
-
+	        log.debug("so viele Confirms" + confirmCounter + "werden gesendet");
 
 	        try {
 	            //lösche clients aus Waitlist AL
