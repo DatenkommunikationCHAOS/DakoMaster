@@ -26,3 +26,4 @@ tmp/**/*
 #Mac OS
 .DS_Store
 /bin
+src/main/java/edu/hm/dako/chat/benchmarking/BenchmarkingClientCoordinator.java

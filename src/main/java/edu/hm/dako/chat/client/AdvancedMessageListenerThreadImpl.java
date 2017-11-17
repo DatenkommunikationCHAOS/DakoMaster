@@ -157,11 +157,11 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         //created ConfirmPDU und sendet diese weiter AL
           
               ChatPDU ConfirmPDU = ChatPDU.createChatMessageEventPdu(sharedClientData.userName,
-                      receivedPdu);
+                      receivedPdu); 
               
               try {
                   connection.send(ConfirmPDU);
-                  //Liste durchgehen und an jeden einzelnen senden AL
+                  //Liste durchgehen und an jeden einzelnen senden AL -> AG: muss doch nur an Server senden
                   //sharedClientData.confirmCounter.getAndIncrement(); funktioniert nicht
               } catch (Exception e) {
                   System.out.println("Confirm nicht möglich");
@@ -258,7 +258,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                     //case --> anderer Client hat Nachricht bekommen AL
                         
 //                    case CHAT_MESSAGE_RESPONSE_CONFIRM:
-//                    	chatMessageEventAction(receivedPdu);
+//                    	chatMessageEventAction(receivedPdu); 
 //                    	break;
                     	
                     case LOGIN_EVENT:

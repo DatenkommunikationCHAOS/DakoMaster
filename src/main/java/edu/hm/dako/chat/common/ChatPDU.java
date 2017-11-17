@@ -39,32 +39,6 @@ public class ChatPDU implements Serializable {
 
 	// Nutzdaten (eigentliche Chat-Nachricht in Textform)
 	private String message;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
 	// Liste aller angemeldeten User
 	private Vector<String> clients;
@@ -135,18 +109,15 @@ public class ChatPDU implements Serializable {
 
 		return "\n"
 				+ "ChatPdu ****************************************************************************************************"
-				+ "\n" + "PduType: " + this.pduType + ", " + "\n" + "userName: " + this.userName
-				+ ", " + "\n" + "eventUserName: " + this.eventUserName + ", " + "\n"
-				+ "clientThreadName: " + this.clientThreadName + ", " + "\n"
-				+ "serverThreadName: " + this.serverThreadName + ", " + "\n" + "errrorCode: "
-				+ this.errorCode + ", " + "\n" + "sequenceNumber: " + this.sequenceNumber + "\n"
-				+ "serverTime: " + this.serverTime + ", " + "\n" + "clientStatus: "
-				+ this.clientStatus + "," + "\n" + "numberOfReceivedChatMessages: "
-				+ this.numberOfReceivedChatMessages + ", " + "\n" + "numberOfSentEvents: "
-				+ this.numberOfSentEvents + ", " + "\n" + "numberOfLostConfirms: "
-				+ this.numberOfLostConfirms + ", " + "\n" + "numberOfRetries: "
-				+ this.numberOfRetries + "\n" + "clients (Userliste): " + this.clients + ", "
-				+ "\n" + "message: " + this.message + "\n"
+				+ "\n" + "PduType: " + this.pduType + ", " + "\n" + "userName: " + this.userName + ", " + "\n"
+				+ "eventUserName: " + this.eventUserName + ", " + "\n" + "clientThreadName: " + this.clientThreadName
+				+ ", " + "\n" + "serverThreadName: " + this.serverThreadName + ", " + "\n" + "errrorCode: "
+				+ this.errorCode + ", " + "\n" + "sequenceNumber: " + this.sequenceNumber + "\n" + "serverTime: "
+				+ this.serverTime + ", " + "\n" + "clientStatus: " + this.clientStatus + "," + "\n"
+				+ "numberOfReceivedChatMessages: " + this.numberOfReceivedChatMessages + ", " + "\n"
+				+ "numberOfSentEvents: " + this.numberOfSentEvents + ", " + "\n" + "numberOfLostConfirms: "
+				+ this.numberOfLostConfirms + ", " + "\n" + "numberOfRetries: " + this.numberOfRetries + "\n"
+				+ "clients (Userliste): " + this.clients + ", " + "\n" + "message: " + this.message + "\n"
 				+ "**************************************************************************************************** ChatPdu"
 				+ "\n";
 	}
@@ -288,15 +259,14 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Logout-Event-PDU
 	 * 
 	 * @param userName
-	 *          Client, der Logout-Request-PDU gesendet hat
+	 *            Client, der Logout-Request-PDU gesendet hat
 	 * @param clientList
-	 *          Liste der registrierten User
+	 *            Liste der registrierten User
 	 * @param receivedPdu
-	 *          Empfangene PDU (Logout-Request-PDU)
+	 *            Empfangene PDU (Logout-Request-PDU)
 	 * @return Erzeugte PDU
 	 */
-	public static ChatPDU createLogoutEventPdu(String userName, Vector<String> clientList,
-			ChatPDU receivedPdu) {
+	public static ChatPDU createLogoutEventPdu(String userName, Vector<String> clientList, ChatPDU receivedPdu) {
 
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.LOGOUT_EVENT);
@@ -313,15 +283,14 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Login-Event-PDU
 	 * 
 	 * @param userName
-	 *          Client, der Login-Request-PDU gesendet hat
+	 *            Client, der Login-Request-PDU gesendet hat
 	 * @param clientList
-	 *          Liste der registrierten User
+	 *            Liste der registrierten User
 	 * @param receivedPdu
-	 *          Empfangene PDU (Login-Request-PDU)
+	 *            Empfangene PDU (Login-Request-PDU)
 	 * @return Erzeugte PDU
 	 */
-	public static ChatPDU createLoginEventPdu(String userName, Vector<String> clientList,
-			ChatPDU receivedPdu) {
+	public static ChatPDU createLoginEventPdu(String userName, Vector<String> clientList, ChatPDU receivedPdu) {
 
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.LOGIN_EVENT);
@@ -339,13 +308,12 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Login-Response-PDU
 	 * 
 	 * @param eventInitiator
-	 *          Urspruenglicher Client, der Login-Request-PDU gesendet hat
+	 *            Urspruenglicher Client, der Login-Request-PDU gesendet hat
 	 * @param receivedPdu
-	 *          Empfangene PDU
+	 *            Empfangene PDU
 	 * @return Erzeugte PDU
 	 */
-	public static ChatPDU createLoginResponsePdu(String eventInitiator,
-			ChatPDU receivedPdu) {
+	public static ChatPDU createLoginResponsePdu(String eventInitiator, ChatPDU receivedPdu) {
 
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.LOGIN_RESPONSE);
@@ -360,9 +328,9 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Chat-Message-Event-PDU
 	 * 
 	 * @param userName
-	 *          Client, der Chat-Message-Request-PDU gesendet hat
+	 *            Client, der Chat-Message-Request-PDU gesendet hat
 	 * @param receivedPdu
-	 *          (Chat-Message-Request-PDU)
+	 *            (Chat-Message-Request-PDU)
 	 * @return Erzeugte PDU
 	 */
 	public static ChatPDU createChatMessageEventPdu(String userName, ChatPDU receivedPdu) {
@@ -383,24 +351,23 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Logout-Response-PDU
 	 * 
 	 * @param eventInitiator
-	 *          Urspruenglicher Client, der Logout-Request-PDU gesendet hat
+	 *            Urspruenglicher Client, der Logout-Request-PDU gesendet hat
 	 * @param numberOfSentEvents
-	 *          Anzahl an den Client gesendeter Events
+	 *            Anzahl an den Client gesendeter Events
 	 * @param numberOfLostEventConfirms
-	 *          Anzahl verlorener EventConfirms des Clients
+	 *            Anzahl verlorener EventConfirms des Clients
 	 * @param numberOfReceivedEventConfirms
-	 *          Anzahl empfangender EventConfirms des Clients
+	 *            Anzahl empfangender EventConfirms des Clients
 	 * @param numberOfRetries
-	 *          Anzahl wiederholter Nachrichten
+	 *            Anzahl wiederholter Nachrichten
 	 * @param numberOfReceivedChatMessages
-	 *          Anzahl empfangender Chat-Messages des Clients
+	 *            Anzahl empfangender Chat-Messages des Clients
 	 * @param clientThreadName
-	 *          Name des Client-Threads
+	 *            Name des Client-Threads
 	 * @return Aufgebaute ChatPDU
 	 */
-	public static ChatPDU createLogoutResponsePdu(String eventInitiator,
-			long numberOfSentEvents, long numberOfLostEventConfirms,
-			long numberOfReceivedEventConfirms, long numberOfRetries,
+	public static ChatPDU createLogoutResponsePdu(String eventInitiator, long numberOfSentEvents,
+			long numberOfLostEventConfirms, long numberOfReceivedEventConfirms, long numberOfRetries,
 			long numberOfReceivedChatMessages, String clientThreadName) {
 
 		ChatPDU pdu = new ChatPDU();
@@ -423,24 +390,23 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Chat-Message-Response-PDU
 	 * 
 	 * @param eventInitiator
-	 *          Urspruenglicher Client, der Chat-Message-Request-PDU gesendet hat
+	 *            Urspruenglicher Client, der Chat-Message-Request-PDU gesendet hat
 	 * @param numberOfSentEvents
-	 *          Anzahl an den Client gesendeter Events
+	 *            Anzahl an den Client gesendeter Events
 	 * @param numberOfLostEventConfirms
-	 *          Anzahl verlorener EventConfirms des Clients
+	 *            Anzahl verlorener EventConfirms des Clients
 	 * @param numberOfReceivedEventConfirms
-	 *          Anzahl empfangender EventConfirms des Clients
+	 *            Anzahl empfangender EventConfirms des Clients
 	 * @param numberOfRetries
-	 *          Anzahl wiederholter Nachrichten
+	 *            Anzahl wiederholter Nachrichten
 	 * @param numberOfReceivedChatMessages
-	 *          Anzahl empfangender Chat-Messages des Clients
+	 *            Anzahl empfangender Chat-Messages des Clients
 	 * @param serverTime
-	 *          Requestbearbeitungszeit im Server
+	 *            Requestbearbeitungszeit im Server
 	 * @return Erzeugte PDU
 	 */
-	public static ChatPDU createChatMessageResponsePdu(String eventInitiator,
-			long numberOfSentEvents, long numberOfLostEventConfirms,
-			long numberOfReceivedEventConfirms, long numberOfRetries,
+	public static ChatPDU createChatMessageResponsePdu(String eventInitiator, long numberOfSentEvents,
+			long numberOfLostEventConfirms, long numberOfReceivedEventConfirms, long numberOfRetries,
 			long numberOfReceivedChatMessages, String clientThreadName, long serverTime) {
 
 		ChatPDU pdu = new ChatPDU();
@@ -464,15 +430,16 @@ public class ChatPDU implements Serializable {
 		// Serverbearbeitungszeit
 		pdu.setServerTime(serverTime);
 		return pdu;
+
 	}
 
 	/**
 	 * Erzeugen einer Login-Response-PDU mit Fehlermeldung
 	 * 
 	 * @param pdu
-	 *          Empfangene PDU
+	 *            Empfangene PDU
 	 * @param errorCode
-	 *          Fehlercode, der in der PDU uebertragen werden soll
+	 *            Fehlercode, der in der PDU uebertragen werden soll
 	 * @return Erzeugte PDU
 	 */
 	public static ChatPDU createLoginErrorResponsePdu(ChatPDU receivedPdu, int errorCode) {
@@ -486,9 +453,9 @@ public class ChatPDU implements Serializable {
 		pdu.setErrorCode(errorCode);
 		return pdu;
 	}
-	
-	//AL neue Confirm PDU erstellen
-	
+
+	// AL neue Confirm PDU erstellen
+
 	public static ChatPDU createMessageConfirmPdu(String username, ChatPDU receivedPdu) {
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.CHAT_MESSAGE_RESPONSE_CONFIRM);
@@ -498,20 +465,31 @@ public class ChatPDU implements Serializable {
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 		pdu.setEventUserName(receivedPdu.getEventUserName());
 		return pdu;
-		
+
 	}
-	
-	// Methode für Login und Logout 
 
-    public static ChatPDU createLoginEventConfirm(String userName,
-            ChatPDU receivedPdu) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	// Methode für Login und Logout
+	// AG
+	public static ChatPDU createLoginEventConfirm(String username, ChatPDU receivedPdu) {
+		ChatPDU pdu = new ChatPDU();
+		pdu.setPduType(PduType.LOGIN_CONFIRM);
+		pdu.setUserName(username); // Name vom User, der den Confirm also diese Pdu zum Server schickt?
+		pdu.setEventUserName(receivedPdu.getEventUserName()); // Name des Clients, von dem ein Event initiiert wurde
+		pdu.setServerThreadName(receivedPdu.getServerThreadName()); // Server an den man es schicken muss?
+		pdu.setClientThreadName(receivedPdu.getClientThreadName()); // Name des Client-Threads, der den Request absendet
+		pdu.setClientStatus(ClientConversationStatus.REGISTERING);
+		return pdu;
 
-    public static ChatPDU createLogoutEventConfirm(String userName,
-            ChatPDU receivedPdu) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	}
+	//AG
+	public static ChatPDU createLogoutEventConfirm(String username, ChatPDU receivedPdu) {
+		ChatPDU pdu = new ChatPDU();
+		pdu.setPduType(PduType.LOGOUT_CONFIRM);
+		pdu.setUserName(username); 
+		pdu.setEventUserName(receivedPdu.getEventUserName()); 
+		pdu.setServerThreadName(receivedPdu.getServerThreadName()); 
+		pdu.setClientThreadName(receivedPdu.getClientThreadName()); 
+		pdu.setClientStatus(ClientConversationStatus.UNREGISTERING);
+		return pdu;
+	}
 }

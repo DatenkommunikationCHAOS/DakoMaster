@@ -35,7 +35,7 @@ public final class BenchmarkingClientFactory {
 						param.getNumberOfRetries(), param.getResponseTimeout(), sharedData,
 						getDecoratedFactory(new TcpConnectionFactory()));
 				return impl;
-
+			// AG: hier case TCPAdvancedImplementation
 			default:
 				throw new RuntimeException(
 						"Unbekannter Implementierungstyp: " + param.getImplementationType());
