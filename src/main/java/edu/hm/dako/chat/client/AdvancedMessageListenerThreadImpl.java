@@ -1,5 +1,7 @@
 package edu.hm.dako.chat.client;
 
+import java.util.logging.Logger;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -68,6 +70,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
         try {
             handleUserListEvent(receivedPdu);
+            loginConfirmAction(receivedPdu);
         } catch (Exception e) {
             ExceptionHandler.logException(e);
         }
@@ -156,13 +159,15 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
         
         //created ConfirmPDU und sendet diese weiter AL
           
-              ChatPDU ConfirmPDU = ChatPDU.createChatMessageEventPdu(sharedClientData.userName,
+              ChatPDU ConfirmPDU = ChatPDU.createMessageConfirmPdu(sharedClientData.userName,
                       receivedPdu); 
               
               try {
                   connection.send(ConfirmPDU);
                   //Liste durchgehen und an jeden einzelnen senden AL -> AG: muss doch nur an Server senden
                   //sharedClientData.confirmCounter.getAndIncrement(); funktioniert nicht
+                  System.out.println("Confirm gesendet" + ConfirmPDU);
+                  log.debug("Confirm gesendet" + ConfirmPDU);
               } catch (Exception e) {
                   System.out.println("Confirm nicht möglich");
                   //throw new IO Exception
@@ -246,7 +251,6 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
                         chatMessageResponseAction(receivedPdu);
                         break;
                         
-                   
                     
 
                     case CHAT_MESSAGE_EVENT:
@@ -348,6 +352,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
         try {
             connection.send(confirmPdu);
+            System.out.println("Login Confirm gesendet");
             log.debug("Login-Confirm-PDU fuer Client " + sharedClientData.userName
                     + " an Server gesendet");
         } catch (Exception e) {

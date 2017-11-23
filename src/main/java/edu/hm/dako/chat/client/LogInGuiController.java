@@ -156,9 +156,11 @@ public class LogInGuiController implements Initializable {
 			return false;
 		}
 	}
+	
+	//TCP_ADVANCED dazu AL
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		comboServerType.getItems().addAll(SystemConstants.IMPL_TCP_SIMPLE);
+		comboServerType.getItems().addAll(SystemConstants.IMPL_TCP_SIMPLE,SystemConstants.IMPL_TCP_ADVANCED);
 	}
 }

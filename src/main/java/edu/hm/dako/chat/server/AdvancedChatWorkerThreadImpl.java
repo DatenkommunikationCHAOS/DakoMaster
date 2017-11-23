@@ -5,6 +5,7 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.hm.dako.chat.client.SharedClientData;
 import edu.hm.dako.chat.common.ChatPDU;
 import edu.hm.dako.chat.common.ClientConversationStatus;
 import edu.hm.dako.chat.common.ClientListEntry;
@@ -33,6 +34,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	@Override
 	public void run() {
 		log.debug("ChatWorker-Thread erzeugt, Threadname: " + Thread.currentThread().getName());
+		System.out.println("CHatWorker-Thread erzeugt");
 		while (!finished && !Thread.currentThread().isInterrupted()) {
 			try {
 				// Warte auf naechste Nachricht des Clients und fuehre
@@ -421,16 +423,17 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			case CHAT_MESSAGE_RESPONSE_CONFIRM:
 				// chat Nachricht beim Client angekommen
 				chatMessageConfirmAction(receivedPdu);
+				break;
 
 			case LOGOUT_REQUEST:
 				// Logout-Request vom Client empfangen
 				logoutRequestAction(receivedPdu);
 				break;
 
-			// case LOGIN_CONFIRM:
-			// // Login-Confirm von Client empfangen
-			// loginConfirmAction(receivedPdu);
-			// break;
+			 case LOGIN_CONFIRM:
+			 // Login-Confirm von Client empfangen
+			 loginConfirmAction(receivedPdu);
+			 break;
 
 			// case LOGOUT_CONFIRM:
 			// // Login-Confirm von Client empfangen
@@ -451,20 +454,21 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
-
-		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
+	    SharedChatClientList client = SharedChatClientList.getInstance();
+		client.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
 		log.debug("Chat Message Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
 				+ receivedPdu.getUserName() + " empfangen.");
+		System.out.println("chat Message Confirm empfangen von" + receivedPdu.getEventUserName());
 		log.debug("so viele Confirms" + confirmCounter + "werden gesendet");
 
 		try {
 			// lösche clients aus Waitlist AL
-			clients.deleteWaitListEntry(receivedPdu.getEventUserName(), receivedPdu.getUserName());
+			client.deleteWaitListEntry(receivedPdu.getEventUserName(), receivedPdu.getUserName());
 			// Wenn Waitlist aus 0, dann.... AL
-			if (clients.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
+			if (client.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
 				// bekomme die Liste aller Clients
-				ClientListEntry clientList = clients.getClient(receivedPdu.getEventUserName());
+				ClientListEntry clientList = client.getClient(receivedPdu.getEventUserName());
 				// testen ob überhaupt Clients vorhanden AL
 				if (clientList != null) {
 					// erstelle response PDU AL
@@ -475,6 +479,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					try {
 						// sende response PDU AL
 						clientList.getConnection().send(responsePdu); //AG: respnse pdu doch nur an den Client, der die Nachricht geschickt hat, schicken???
+                        System.out.println("Chat-Message-Response-PDU an " + responsePdu.getUserName() + " gesendet");
+
 					} catch (Exception e) {
 						ExceptionHandler.logExceptionAndTerminate(e);
 					}
@@ -488,7 +494,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// AG: Methode um Login zu bestätigen, sendet eine responsePDU an den Client, der sich einloggen will
 	// nachdem er sie aus der Liste gelöscht hat AG
 	private void loginConfirmAction(ChatPDU receivedPdu) {
-
+	    
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
 		log.debug("Login Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
