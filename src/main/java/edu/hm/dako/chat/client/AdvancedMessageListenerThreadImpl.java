@@ -62,7 +62,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		int events = SharedClientData.loginEvents.incrementAndGet();
 
 		log.debug(sharedClientData.userName + " erhaelt LoginEvent, LoginEventCounter: " + events);
-		ChatPDU loginConfirmPdu = ChatPDU.createLogoutEventConfirm(receivedPdu.getEventUserName(), receivedPdu); // AG
+		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(receivedPdu.getEventUserName(), receivedPdu); // AG
 																													// Erstellen
 																													// von
 																													// ConfirmPdu

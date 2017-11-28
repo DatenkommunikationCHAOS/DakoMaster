@@ -197,8 +197,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void chatMessageRequestAction(ChatPDU receivedPdu) {
-
-		ClientListEntry client = null;
+			
+		ClientListEntry client = null; 
 		clients.setRequestStartTime(receivedPdu.getUserName(), startTime);
 		clients.incrNumberOfReceivedChatMessages(receivedPdu.getUserName());
 		serverGuiInterface.incrNumberOfRequests();
@@ -210,8 +210,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		} else {
 			// Liste der betroffenen Clients ermitteln
 			Vector<String> sendList = clients.getClientNameList();
+						
 			ChatPDU pdu = ChatPDU.createChatMessageEventPdu(userName, receivedPdu);
-
+			
 			// Event an Clients senden
 			for (String s : new Vector<String>(sendList)) {
 				client = clients.getClient(s);
@@ -232,9 +233,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					ExceptionHandler.logException(e);
 				}
 			}
-
-			client = clients.getClient(receivedPdu.getUserName());
-			if (client != null) {
+			
+				client = clients.getClient(receivedPdu.getUserName());
+			if (client != null ) { 
 				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0,
 						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
 						(System.nanoTime() - client.getStartTime()));
@@ -431,6 +432,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				break;
 
 			 case LOGIN_CONFIRM:
+				 System.out.println("Geht in SwitchCase loginconfirm");
 			 // Login-Confirm von Client empfangen
 			 loginConfirmAction(receivedPdu);
 			 break;
@@ -454,7 +456,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
-	    SharedChatClientList client = SharedChatClientList.getInstance();
+	    SharedChatClientList client = SharedChatClientList.getInstance(); //Vector<String> waitList = clients.createWaitList();
 		client.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
 		log.debug("Chat Message Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
@@ -494,7 +496,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// AG: Methode um Login zu bestätigen, sendet eine responsePDU an den Client, der sich einloggen will
 	// nachdem er sie aus der Liste gelöscht hat AG
 	private void loginConfirmAction(ChatPDU receivedPdu) {
-	    
+	    System.out.println("startet Methode LoginConfirmaction");
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
 		log.debug("Login Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
@@ -511,13 +513,13 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				// AG:testen ob überhaupt Clients vorhanden sind und eine response Pdu gesendet werden muss -> wann ist das nicht der Fall?
 				if (clientList != null) {
 					// erstelle response PDU AL
-					ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0, // eventuell 1,0,0,0 ???
-							clientList.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-							(System.nanoTime() - clientList.getStartTime()));
+					ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(receivedPdu.getUserName(), receivedPdu);
 
 					try {
 						// sende response PDU AL
 						clientList.getConnection().send(responsePdu);  //woher weis Server an welchen Kommunikationspartner?
+						System.out.println("LoginResponse Pdu wurde gesendet an "+ responsePdu.getUserName()); //AG
+						log.debug("LoginResponsePdu wurde gesendet an " + responsePdu.getUserName());
 					} catch (Exception e) {
 						ExceptionHandler.logExceptionAndTerminate(e);
 					}
