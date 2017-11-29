@@ -452,7 +452,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						+ receivedPdu.getPduType());
 				break;
 			}
-		} catch (Exception e) {
+ 		} catch (Exception e) {
 			log.error("Exception bei der Nachrichtenverarbeitung");
 			ExceptionHandler.logExceptionAndTerminate(e);
 		}
