@@ -21,7 +21,7 @@ import javafx.concurrent.Task;
  */
 public class AdvancedChatServerImpl extends AbstractChatServer {
 
-    private static Log log = LogFactory.getLog(SimpleChatServerImpl.class);
+    private static Log log = LogFactory.getLog(SimpleChatServerImpl.class); //AG ändern? 
 
     // Threadpool fuer Worker-Threads
     private final ExecutorService executorService;
@@ -39,7 +39,7 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
      */
     public AdvancedChatServerImpl(ExecutorService executorService,
             ServerSocketInterface socket, ChatServerGuiInterface serverGuiInterface) {
-        log.debug("SimpleChatServerImpl konstruiert");
+        log.debug("AdvancedChatServerImpl konstruiert");
         this.executorService = executorService;
         this.socket = socket;
         this.serverGuiInterface = serverGuiInterface;
@@ -61,7 +61,7 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
                     try {
                         // Auf ankommende Verbindungsaufbauwuensche warten
                         System.out.println(
-                                "SimpleChatServer wartet auf Verbindungsanfragen von Clients...");
+                                "AdvancedChatServer wartet auf Verbindungsanfragen von Clients...");
 
                         Connection connection = socket.accept();
                         log.debug("Neuer Verbindungsaufbauwunsch empfangen");
@@ -115,6 +115,6 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
         executorService.shutdown();
         log.debug("Threadpool freigegeben");
 
-        System.out.println("SimpleChatServer beendet sich");
+        System.out.println("AdvancedChatServer beendet sich");
     }
 }
