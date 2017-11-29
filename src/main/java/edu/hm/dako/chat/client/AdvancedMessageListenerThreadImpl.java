@@ -177,7 +177,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 		ChatPDU receivedPdu = null;
 
-		log.debug("SimpleMessageListenerThread gestartet");
+		log.debug("AdvancedMessageListenerThread gestartet");
 
 		while (!finished) {
 
@@ -322,7 +322,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}
-		log.debug("Ordnungsgemaesses Ende des SimpleMessageListener-Threads fuer User" + sharedClientData.userName
+		log.debug("Ordnungsgemaesses Ende des AdvancedMessageListener-Threads fuer User" + sharedClientData.userName
 				+ ", Status: " + sharedClientData.status);
 	} // run
 

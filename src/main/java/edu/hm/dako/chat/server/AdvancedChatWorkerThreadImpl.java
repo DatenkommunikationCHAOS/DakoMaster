@@ -117,19 +117,21 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			sendLoginListUpdateEvent(pdu);
 
 			// Login Response senden
-			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
-
-			try {
-				clients.getClient(userName).getConnection().send(responsePdu);
-			} catch (Exception e) {
-				log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
-				log.debug("Exception Message: " + e.getMessage());
-			}
-
-			log.debug("Login-Response-PDU an Client " + userName + " gesendet");
+//			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu); // AG brauchen wir hier nicht
+//			
+//
+//			try {
+//				clients.getClient(userName).getConnection().send(responsePdu);
+//				System.out.println("ResponsePdu gesendet an " +  userName);
+//			} catch (Exception e) {
+//				log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
+//				log.debug("Exception Message: " + e.getMessage());
+//			}
+//
+//			log.debug("Login-Response-PDU an Client " + userName + " gesendet");
 
 			// Zustand des Clients aendern
-			clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED);
+			clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED); //AG hier oder erst nach response und confirm?
 
 		} else {
 			// User bereits angemeldet, Fehlermeldung an Client senden,
