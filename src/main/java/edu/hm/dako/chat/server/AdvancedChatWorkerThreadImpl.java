@@ -496,7 +496,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// AG: Methode um Login zu bestätigen, sendet eine responsePDU an den Client, der sich einloggen will
 	// nachdem er sie aus der Liste gelöscht hat AG
 	private void loginConfirmAction(ChatPDU receivedPdu) {
-	    System.out.println("startet Methode LoginConfirmaction");
+		
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
 		log.debug("Login Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
@@ -505,7 +505,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		try {
 			// löscht Client, der Nachricht bestätigt hat aus der Liste raus
-			clients.deleteWaitListEntry(receivedPdu.getEventUserName(), receivedPdu.getUserName());
+			clients.deleteWaitListEntry(receivedPdu.getEventUserName(), userName);
+
 			// Wenn Waitlist leer ist AG
 			if (clients.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
 				// bekomme die Liste aller Clients AG
@@ -519,7 +520,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						// sende response PDU AL
 						clientList.getConnection().send(responsePdu);  //woher weis Server an welchen Kommunikationspartner?
 						System.out.println("LoginResponse Pdu wurde gesendet an "+ responsePdu.getUserName()); //AG
-						log.debug("LoginResponsePdu wurde gesendet an " + responsePdu.getUserName());
+						
 					} catch (Exception e) {
 						ExceptionHandler.logExceptionAndTerminate(e);
 					}

@@ -70,7 +70,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		try {
 			connection.send(loginConfirmPdu); // AG Senden von ConfirmPdu
 			System.out.println("Login Confirm Pdu wurde gesendet von " + loginConfirmPdu.getUserName()); // AG
-			handleUserListEvent(receivedPdu);
+			//handleUserListEvent(receivedPdu); //AG auskommentiert -> bin nicht sicher ob wir das brauchen
 			// loginConfirmAction(receivedPdu); //AG: Hab das auskommentiert, brauchen wir
 			// eigentlich hier nicht
 		} catch (Exception e) {
