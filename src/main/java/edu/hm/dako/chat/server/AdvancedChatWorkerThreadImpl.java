@@ -488,9 +488,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 					try {
 						// sende response PDU AL
-						clientList.getConnection().send(responsePdu); //AG: respnse pdu doch nur an den Client, der die Nachricht geschickt hat, schicken???
+						clients.getClient(receivedPdu.getEventUserName()).getConnection().send(responsePdu);
                         System.out.println("Chat-Message-Response-PDU an " + responsePdu.getUserName() + " gesendet"); // AG: wird an richtigen gesendet?
-
+                        System.out.println(responsePdu);
 					} catch (Exception e) {
 						ExceptionHandler.logExceptionAndTerminate(e);
 					}
@@ -526,9 +526,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 					try {
 						// sende response PDU AL
-						clientList.getConnection().send(responsePdu);  //woher weis Server an welchen Kommunikationspartner?
+						clients.getClient(receivedPdu.getEventUserName()).getConnection().send(responsePdu);
 						System.out.println("LoginResponse Pdu wurde gesendet an "+ responsePdu.getUserName()); //AG
-						
+						System.out.println(responsePdu);
 					} catch (Exception e) {
 						ExceptionHandler.logExceptionAndTerminate(e);
 					}
