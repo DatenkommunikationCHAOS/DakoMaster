@@ -115,6 +115,6 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
         executorService.shutdown();
         log.debug("Threadpool freigegeben");
 
-        System.out.println("SimpleChatServer beendet sich");
+        System.out.println("AdvancedChatServer beendet sich");
     }
 }
