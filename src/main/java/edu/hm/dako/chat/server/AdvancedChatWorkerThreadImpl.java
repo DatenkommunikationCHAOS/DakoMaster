@@ -210,6 +210,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		if (!clients.existsClient(receivedPdu.getUserName())) {
 			log.debug("User nicht in Clientliste: " + receivedPdu.getUserName());
 		} else {
+			//AG: Erstellen einer Waitlist, an richtiger Stelle?
+			clients.createWaitList(userName); 
+			
 			// Liste der betroffenen Clients ermitteln
 			Vector<String> sendList = clients.getClientNameList();
 						
@@ -235,27 +238,27 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					ExceptionHandler.logException(e);
 				}
 			}
-			
-				client = clients.getClient(receivedPdu.getUserName());
-			if (client != null ) { 
-				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0,
-						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-						(System.nanoTime() - client.getStartTime()));
-
-				if (responsePdu.getServerTime() / 1000000 > 100) {
-					log.debug(Thread.currentThread().getName()
-							+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
-							+ responsePdu.getServerTime() + " ns = " + responsePdu.getServerTime() / 1000000 + " ms");
-				}
-
-				try {
-					client.getConnection().send(responsePdu);
-					log.debug("Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
-				} catch (Exception e) {
-					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName() + " nicht moeglich");
-					ExceptionHandler.logExceptionAndTerminate(e);
-				}
-			}
+//			AG: auskommentiert da hier nicht mehr response pdu senden
+//				client = clients.getClient(receivedPdu.getUserName());
+//			if (client != null ) { 
+//				ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0,
+//						client.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+//						(System.nanoTime() - client.getStartTime()));
+//
+//				if (responsePdu.getServerTime() / 1000000 > 100) {
+//					log.debug(Thread.currentThread().getName()
+//							+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
+//							+ responsePdu.getServerTime() + " ns = " + responsePdu.getServerTime() / 1000000 + " ms");
+//				}
+//
+//				try {
+//					client.getConnection().send(responsePdu);
+//					log.debug("Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet");
+//				} catch (Exception e) {
+//					log.debug("Senden einer Chat-Message-Response-PDU an " + client.getUserName() + " nicht moeglich");
+//					ExceptionHandler.logExceptionAndTerminate(e);
+//				}
+		//	}
 			log.debug("Aktuelle Laenge der Clientliste: " + clients.size());
 		}
 	}
@@ -449,7 +452,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						+ receivedPdu.getPduType());
 				break;
 			}
-		} catch (Exception e) {
+ 		} catch (Exception e) {
 			log.error("Exception bei der Nachrichtenverarbeitung");
 			ExceptionHandler.logExceptionAndTerminate(e);
 		}
@@ -458,21 +461,24 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
-	    SharedChatClientList client = SharedChatClientList.getInstance(); //Vector<String> waitList = clients.createWaitList();
-		client.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
+	    //SharedChatClientList client = SharedChatClientList.getInstance(); //AG auskommentiert
+		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
 		log.debug("Chat Message Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
 				+ receivedPdu.getUserName() + " empfangen.");
-		System.out.println("chat Message Confirm empfangen von" + receivedPdu.getEventUserName());
+		System.out.println("chat Message Confirm empfangen von" + userName);
 		log.debug("so viele Confirms" + confirmCounter + "werden gesendet");
 
 		try {
 			// lösche clients aus Waitlist AL
-			client.deleteWaitListEntry(receivedPdu.getEventUserName(), receivedPdu.getUserName());
+			System.out.println("Event User Name: " + receivedPdu.getEventUserName());
+			System.out.println("Größe vor Löschen" + clients.getWaitListSize(receivedPdu.getEventUserName()));
+			clients.deleteWaitListEntry(receivedPdu.getEventUserName(), userName); //receivedPdu.getUserName()
+			System.out.println("Größe nach Löschen" + clients.getWaitListSize(receivedPdu.getEventUserName()));
 			// Wenn Waitlist aus 0, dann.... AL
-			if (client.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
+			if (clients.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
 				// bekomme die Liste aller Clients
-				ClientListEntry clientList = client.getClient(receivedPdu.getEventUserName());
+				ClientListEntry clientList = clients.getClient(receivedPdu.getEventUserName());
 				// testen ob überhaupt Clients vorhanden AL
 				if (clientList != null) {
 					// erstelle response PDU AL
@@ -483,7 +489,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					try {
 						// sende response PDU AL
 						clientList.getConnection().send(responsePdu); //AG: respnse pdu doch nur an den Client, der die Nachricht geschickt hat, schicken???
-                        System.out.println("Chat-Message-Response-PDU an " + responsePdu.getUserName() + " gesendet");
+                        System.out.println("Chat-Message-Response-PDU an " + responsePdu.getUserName() + " gesendet"); // AG: wird an richtigen gesendet?
 
 					} catch (Exception e) {
 						ExceptionHandler.logExceptionAndTerminate(e);
