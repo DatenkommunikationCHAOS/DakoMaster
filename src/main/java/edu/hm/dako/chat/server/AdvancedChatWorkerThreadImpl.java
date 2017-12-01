@@ -122,7 +122,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 //
 //			try {
 //				clients.getClient(userName).getConnection().send(responsePdu);
-//				System.out.println("ResponsePdu gesendet an " +  userName);
 //			} catch (Exception e) {
 //				log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
 //				log.debug("Exception Message: " + e.getMessage());
@@ -131,7 +130,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 //			log.debug("Login-Response-PDU an Client " + userName + " gesendet");
 
 			// Zustand des Clients aendern
-			clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED); //AG hier oder erst nach response und confirm?
+			//clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED); 
 
 		} else {
 			// User bereits angemeldet, Fehlermeldung an Client senden,
@@ -485,13 +484,21 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0,
 							clientList.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
 							(System.nanoTime() - clientList.getStartTime()));
-
+					//AG: Übernahme aus loginRequestAction()
+					if (responsePdu.getServerTime() / 1000000 > 100) {
+						log.debug(Thread.currentThread().getName()
+								+ ", Benoetigte Serverzeit vor dem Senden der Response-Nachricht > 100 ms: "
+								+ responsePdu.getServerTime() + " ns = " + responsePdu.getServerTime() / 1000000 + " ms");
+					}
+					
 					try {
 						// sende response PDU AL
 						clients.getClient(receivedPdu.getEventUserName()).getConnection().send(responsePdu);
+						log.debug("Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " gesendet"); //AG: eingefügt aus chatMessageRequestAction()
                         System.out.println("Chat-Message-Response-PDU an " + responsePdu.getUserName() + " gesendet"); // AG: wird an richtigen gesendet?
                         System.out.println(responsePdu);
 					} catch (Exception e) {
+						log.debug("Senden einer Chat-Message-Response-PDU an " + receivedPdu.getUserName() + " nicht moeglich"); //AG: eingefügt aus chatMessageRequestAction
 						ExceptionHandler.logExceptionAndTerminate(e);
 					}
 				}
@@ -519,7 +526,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			if (clients.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
 				// bekomme die Liste aller Clients AG
 				ClientListEntry clientList = clients.getClient(receivedPdu.getEventUserName());
-				// AG:testen ob überhaupt Clients vorhanden sind und eine response Pdu gesendet werden muss -> wann ist das nicht der Fall?
+				
 				if (clientList != null) {
 					// erstelle response PDU AL
 					ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(receivedPdu.getUserName(), receivedPdu);
@@ -530,8 +537,17 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						System.out.println("LoginResponse Pdu wurde gesendet an "+ responsePdu.getUserName()); //AG
 						System.out.println(responsePdu);
 					} catch (Exception e) {
-						ExceptionHandler.logExceptionAndTerminate(e);
+						log.debug("Senden einer Login-Response-PDU an " + userName + " fehlgeschlagen");
+						log.debug("Exception Message: " + e.getMessage());
+						ExceptionHandler.logExceptionAndTerminate(e); 
 					}
+					
+					log.debug("Login-Response-PDU an Client" + userName + "gesendet");
+
+					// AG: Zustand des Clients aendern 
+					clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED); 	
+					
+		
 				}
 			}
 		} catch (Exception e) {
