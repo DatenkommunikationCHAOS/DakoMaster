@@ -51,6 +51,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 			Thread.currentThread().setName("Listener" + "-" + sharedClientData.userName);
 			log.debug("Login-Response-PDU fuer Client " + receivedPdu.getUserName() + " empfangen");
+			System.out.println("Login REsponse Pdu für Client empfangen");
 		}
 	}
 
@@ -62,17 +63,12 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		int events = SharedClientData.loginEvents.incrementAndGet();
 
 		log.debug(sharedClientData.userName + " erhaelt LoginEvent, LoginEventCounter: " + events);
-		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(receivedPdu.getEventUserName(), receivedPdu); // AG
-																													// Erstellen
-																													// von
-																													// ConfirmPdu
-		System.out.println("Login Confirm Pdu wurde erstellt."); // AG
+		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(receivedPdu.getEventUserName(), receivedPdu); // AG Erstellen von ConfirmPdu
+		log.debug("Login Confirm Pdu wurde erstellt."); // AG
 		try {
 			connection.send(loginConfirmPdu); // AG Senden von ConfirmPdu
-			System.out.println("Login Confirm Pdu wurde gesendet von " + loginConfirmPdu.getUserName()); // AG
+			log.debug("Login Confirm Pdu wurde gesendet von " + loginConfirmPdu.getUserName()); // AG
 			handleUserListEvent(receivedPdu); // AG: Brauchen wir für Userlist in Gui anzeigen
-			// loginConfirmAction(receivedPdu); //AG: Hab das auskommentiert, brauchen wir
-			// eigentlich hier nicht
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}
@@ -102,8 +98,11 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		int events = SharedClientData.logoutEvents.incrementAndGet();
 
 		log.debug("LogoutEventCounter: " + events);
+		ChatPDU logoutConfirmPdu = ChatPDU.createLogoutEventConfirm(receivedPdu.getEventUserName(), receivedPdu);
 
 		try {
+			connection.send(logoutConfirmPdu);
+			System.out.println("Logout Confirm Pdu gesendet von" + "für Client " + receivedPdu.getEventUserName());
 			handleUserListEvent(receivedPdu);
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
@@ -326,28 +325,28 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 				+ ", Status: " + sharedClientData.status);
 	} // run
 
-	protected void loginConfirmAction(ChatPDU receivedPdu) {
-		ChatPDU confirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName, receivedPdu);
+//	protected void loginConfirmAction(ChatPDU receivedPdu) {
+//		ChatPDU confirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName, receivedPdu);
+//
+//		try {
+//			connection.send(confirmPdu);
+//			System.out.println("Login Confirm gesendet");
+//			log.debug("Login-Confirm-PDU fuer Client " + sharedClientData.userName + " an Server gesendet");
+//		} catch (Exception e) {
+//			ExceptionHandler.logException(e);
+//		}
+//	}
 
-		try {
-			connection.send(confirmPdu);
-			System.out.println("Login Confirm gesendet");
-			log.debug("Login-Confirm-PDU fuer Client " + sharedClientData.userName + " an Server gesendet");
-		} catch (Exception e) {
-			ExceptionHandler.logException(e);
-		}
-	}
-
-	protected void sendlogoutConfirm(ChatPDU receivedPdu) {
-		ChatPDU ConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName, receivedPdu);
-
-		try {
-			connection.send(ConfirmPdu);
-			log.debug("Logout-Confirm-PDU fuer Client " + sharedClientData.userName + " an Server gesendet");
-		} catch (Exception e) {
-			ExceptionHandler.logException(e);
-		}
-	}
+//	protected void sendlogoutConfirm(ChatPDU receivedPdu) {
+//		ChatPDU ConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName, receivedPdu);
+//
+//		try {
+//			connection.send(ConfirmPdu);
+//			log.debug("Logout-Confirm-PDU fuer Client " + sharedClientData.userName + " an Server gesendet");
+//		} catch (Exception e) {
+//			ExceptionHandler.logException(e);
+//		}
+//	}
 }
 
 ////////////////////////////////////////////////
