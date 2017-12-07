@@ -183,16 +183,16 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				ExceptionHandler.logException(e);
 			}
 
-			clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERED);
-
-			// Logout Response senden
-			sendLogoutResponse(receivedPdu.getUserName());
-
-			// Worker-Thread des Clients, der den Logout-Request gesendet
-			// hat, auch gleich zum Beenden markieren
-			clients.finish(receivedPdu.getUserName());
-			log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
-					+ clients.size());
+//			clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERED);
+//
+//			// Logout Response senden
+//			sendLogoutResponse(receivedPdu.getUserName());
+//
+//			// Worker-Thread des Clients, der den Logout-Request gesendet
+//			// hat, auch gleich zum Beenden markieren
+//			clients.finish(receivedPdu.getUserName());
+//			log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
+//					+ clients.size());
 		}
 	}
 
@@ -421,10 +421,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				// Chat-Nachricht angekommen, an alle verteilen
 				chatMessageRequestAction(receivedPdu);
 				break;
-
-			// case --> Chat Nachricht bei Client angekommen, hochzählen Anzahl Clients
-			// (Länge von Vektor sendList?)
-
+				
 			case CHAT_MESSAGE_RESPONSE_CONFIRM:
 				// chat Nachricht beim Client angekommen
 				chatMessageConfirmAction(receivedPdu);
@@ -437,14 +434,15 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 			 case LOGIN_CONFIRM:
 				 System.out.println("Geht in SwitchCase loginconfirm");
-			 // Login-Confirm von Client empfangen
-			 loginConfirmAction(receivedPdu);
-			 break;
-
-			// case LOGOUT_CONFIRM:
-			// // Login-Confirm von Client empfangen
-			// logoutConfirmAction(receivedPdu);
-			// break;
+				 // Login-Confirm von Client empfangen
+				 loginConfirmAction(receivedPdu);
+				 break;
+			 
+			//AG 
+			case LOGOUT_CONFIRM:
+				// Logout-Confirm von Client empfangen
+				logoutConfirmAction(receivedPdu);
+				break;
 
 			default:
 				log.debug("Falsche PDU empfangen von Client: " + receivedPdu.getUserName() + ", PduType: "
@@ -512,7 +510,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// nachdem er sie aus der Liste gelöscht hat AG
 	private void loginConfirmAction(ChatPDU receivedPdu) {
 		
-		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
+		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); //Ag: falscher Counter
 		confirmCounter.getAndIncrement();
 		log.debug("Login Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
 				+ receivedPdu.getUserName() + " empfangen.");
@@ -553,6 +551,43 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}
+		
 	}
+	private void logoutConfirmAction(ChatPDU receivedPdu) {
+		System.out.println("In logoutConfirmAction");
+//		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); //Ag: falscher Counter
+//		confirmCounter.getAndIncrement(); 
+		log.debug("Logout Confirm PDU von " + receivedPdu.getUserName() + " für User "
+				+ receivedPdu.getEventUserName() + " empfangen.");
+		log.debug("so viele Confirms" + confirmCounter + "werden gesendet");
 
+		try {
+			// löscht Client, der Nachricht bestätigt hat aus der Liste raus
+			clients.deleteWaitListEntry(receivedPdu.getEventUserName(), userName);
+			System.out.println("Löschen aus Waitlist");
+			// Wenn Waitlist leer ist AG
+			if (clients.getWaitListSize(receivedPdu.getEventUserName()) == 0) {
+				// bekomme die Liste aller Clients AG
+				ClientListEntry clientList = clients.getClient(receivedPdu.getEventUserName());
+				
+				if (clientList != null) {
+					
+					clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERED);
+					
+					// Logout Response senden
+						sendLogoutResponse(receivedPdu.getEventUserName());
+						System.out.println("Logoutresponse wurde gesendet an" + receivedPdu.getEventUserName());
+					
+					// Worker-Thread des Clients, der den Logout-Request gesendet
+					// hat, auch gleich zum Beenden markieren
+						clients.finish(receivedPdu.getUserName());
+						log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
+								+ clients.size());	
+							
+				}
+			}
+		} catch (Exception e) {
+			ExceptionHandler.logException(e);
+		}
+	}
 }
