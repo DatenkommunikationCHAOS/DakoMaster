@@ -236,7 +236,23 @@ public class SharedChatClientList {
 		// Client kann nun entfernt werden
 		clients.remove(userName);
 		log.debug("Client  " + userName + " vollstaendig aus allen Wartelisten entfernt");
+		
 	}
+	
+	//LS, AG
+	public synchronized HashSet<String> getWaitLists(String userName) {
+		HashSet<String> waitLists = new HashSet<String>();
+		for (String s : new HashSet<String>(clients.keySet())) {
+			ClientListEntry client = (ClientListEntry) clients.get(s);
+			if (client.getWaitList().contains(userName)) {
+				
+				waitLists.add(client.getUserName());
+			}
+		}
+
+		return waitLists;
+	}
+	
 
 	/**
 	 * Entfernt einen Client aus der Clientliste. Der Client darf nur geloescht
@@ -554,4 +570,6 @@ public class SharedChatClientList {
 		}
 		return stringBuilder.toString();
 	}
+	
+	
 }

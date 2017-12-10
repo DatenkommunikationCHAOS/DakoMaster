@@ -1,12 +1,16 @@
 package edu.hm.dako.chat.client;
 
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.sun.xml.internal.ws.client.ClientSchemaValidationTube;
+
 import edu.hm.dako.chat.common.ChatPDU;
 import edu.hm.dako.chat.common.ClientConversationStatus;
+import edu.hm.dako.chat.common.ClientListEntry;
 import edu.hm.dako.chat.common.ExceptionHandler;
 import edu.hm.dako.chat.connection.Connection;
 
@@ -76,7 +80,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void logoutResponseAction(ChatPDU receivedPdu) {
-
+// LS, AG eventuell noch eine Abdeckung für den speziellen Logoutfall? 
 		log.debug(
 				sharedClientData.userName + " empfaengt Logout-Response-PDU fuer Client " + receivedPdu.getUserName());
 		sharedClientData.status = ClientConversationStatus.UNREGISTERED;
