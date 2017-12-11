@@ -1,5 +1,6 @@
 package edu.hm.dako.chat.server;
 
+import java.util.HashSet;
 import java.util.Vector;
 
 import org.apache.commons.logging.Log;
@@ -355,6 +356,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		return false;
 	}
 
+
 	@Override
 	protected void handleIncomingMessage() throws Exception {
 		if (checkIfClientIsDeletable() == true) {
@@ -365,10 +367,14 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		ChatPDU receivedPdu = null;
 
 		// Nach einer Minute wird geprueft, ob Client noch eingeloggt ist
-		final int RECEIVE_TIMEOUT = 1200000;
+		final int RECEIVE_TIMEOUT = 1000; //eigentlich 1200000
+		
+		//AG Timeout für Überprüfen, ob ein Client in einer Waitlist enthalten ist (10 Sekunden)
+		//AG,LSfinal int WAIT_TIMEOUT = 100;
 
 		try {
 			receivedPdu = (ChatPDU) connection.receive(RECEIVE_TIMEOUT);
+			//LS AG  receivedPdu = (ChatPDU) connection.receive(WAIT_TIMEOUT); // AG: 2 Timer gleichzeitig möglich???
 			// Nachricht empfangen
 			// Zeitmessung fuer Serverbearbeitungszeit starten
 			startTime = System.nanoTime();
@@ -387,10 +393,38 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					// Zur Sicherheit eine Logout-Response-PDU an Client senden und
 					// dann Worker-Thread beenden
 					finished = true;
+				} 
+				//AG eventuell hier noch was für logout
+			} else { //LS, AG
+				if (clients.deletable(receivedPdu.getUserName())== false){
+					HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
+					clients.deleteClientWithoutCondition(receivedPdu.getUserName());
+					for (String s: waitList) {
+						if (clients.getWaitListSize(s) == 0) {
+							if (clients.getClientStatus(s)== ClientConversationStatus.REGISTERING) {
+								ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(s, receivedPdu);
+								clients.getClient(s).getConnection().send(responsePdu);
+							} else if (clients.getClientStatus(s) == ClientConversationStatus.REGISTERED) {
+								ClientListEntry c = clients.getClient(s);
+								ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getUserName(), 0, 0, 0, 0,
+										c.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+										(System.nanoTime() - c.getStartTime()));
+								clients.getClient(s).getConnection().send(responsePdu);
+							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERING) {
+								sendLogoutResponse(s);
+							}
+						}
+					}
+					
 				}
 			}
+			
+			
+			
 			return;
 
+					
+			
 		} catch (EndOfFileException e) {
 			log.debug("End of File beim Empfang, vermutlich Verbindungsabbau des Partners fuer " + userName);
 			finished = true;
