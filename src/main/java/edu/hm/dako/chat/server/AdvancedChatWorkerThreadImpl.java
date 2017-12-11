@@ -178,11 +178,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			// In der Advanced-Variante wird noch ein Confirm gesendet, das ist
 			// sicherer.
 
-			try {
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				ExceptionHandler.logException(e);
-			}
+//			try {
+//				Thread.sleep(1000);
+////				log.debug("Zeit ist abgelaufen! Logout-Response an " +  + "wird abgeschickt!");
+//			} catch (Exception e) {
+//				ExceptionHandler.logException(e);
+//			}
 
 //			clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERED);
 //
@@ -356,6 +357,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		return false;
 	}
 
+	public void testIfTimeout() {
+		
+	}
 
 	@Override
 	protected void handleIncomingMessage() throws Exception {
@@ -365,6 +369,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		// Warten auf naechste Nachricht
 		ChatPDU receivedPdu = null;
+		
 
 		// Nach einer Minute wird geprueft, ob Client noch eingeloggt ist
 		final int RECEIVE_TIMEOUT = 1000; //eigentlich 1200000
@@ -372,12 +377,16 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		//AG Timeout für Überprüfen, ob ein Client in einer Waitlist enthalten ist (10 Sekunden)
 		//AG,LSfinal int WAIT_TIMEOUT = 100;
 
+		//JA muss evtl noch eine if-klausel oder etwas anderes um den try catch block?
+		// -> starten vom server: springt dauerhaft in catch block und im log wird dauerhaft der Satz
+		// Timeout beim Empfangen, ... angezeigt
 		try {
 			receivedPdu = (ChatPDU) connection.receive(RECEIVE_TIMEOUT);
 			//LS AG  receivedPdu = (ChatPDU) connection.receive(WAIT_TIMEOUT); // AG: 2 Timer gleichzeitig möglich???
 			// Nachricht empfangen
 			// Zeitmessung fuer Serverbearbeitungszeit starten
 			startTime = System.nanoTime();
+			log.debug(startTime + "nano zeit");
 
 		} catch (ConnectionTimeoutException e) {
 
@@ -386,12 +395,17 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			log.debug("Timeout beim Empfangen, " + RECEIVE_TIMEOUT + " ms ohne Nachricht vom Client");
 
 			if (clients.getClient(userName) != null) {
+				
 				if (clients.getClient(userName).getStatus() == ClientConversationStatus.UNREGISTERING) {
 					// Worker-Thread wartet auf eine Nachricht vom Client, aber es
 					// kommt nichts mehr an
 					log.error("Client ist im Zustand UNREGISTERING und bekommt aber keine Nachricht mehr");
-					// Zur Sicherheit eine Logout-Response-PDU an Client senden und
-					// dann Worker-Thread beenden
+					// Zur Sicherheit eine Logout-Response-PDU an Client senden
+					// JA
+					sendLogoutResponse(receivedPdu.getEventUserName());
+					log.debug("Logout-Response-PDU wurde nochmals an " + receivedPdu.getEventUserName() +
+							"gesendet da Worker-Thread auf Nachricht vom Client wartet aber nichts mehr ankommt");
+					// Worker-Thread wird beendet
 					finished = true;
 				} 
 				//AG eventuell hier noch was für logout
@@ -400,6 +414,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
 					clients.deleteClientWithoutCondition(receivedPdu.getUserName());
 					for (String s: waitList) {
+						// JA: Wenn die WarteListe gleich 0 ist, wie sollte der Client der drinnen ist noch einen Status haben?
+						// Bzw da müsste doch rein theoretisch kein Client mehr drinnen sein? -> != 0
 						if (clients.getWaitListSize(s) == 0) {
 							if (clients.getClientStatus(s)== ClientConversationStatus.REGISTERING) {
 								ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(s, receivedPdu);
@@ -412,18 +428,23 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 								clients.getClient(s).getConnection().send(responsePdu);
 							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERING) {
 								sendLogoutResponse(s);
+							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERED) {
+							// JA
+							// Fall: Client-Status schon disconnectet zum Server dann gezwungermaßen löschen
+							// Status gleich UNREGISTERED
+//								waitList.deletWaitListEntry()
+							
+
 							}
 						}
 					}
 					
 				}
-			}
-			
-			
+			}	
 			
 			return;
-
-					
+			
+			
 			
 		} catch (EndOfFileException e) {
 			log.debug("End of File beim Empfang, vermutlich Verbindungsabbau des Partners fuer " + userName);
@@ -444,36 +465,51 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		// Empfangene Nachricht bearbeiten
 		try {
+//			// JA Timersetzen wann letzte Request gekommen ist, bin mir nicht so sicher ob das unfug ist oder nicht???
+//			lastRequestTime = System.currentTimeMillis();
+//			 log.debug("Zeitpunkt wann zuletzt eine Request angekommen ist: " + lastRequestTime);
+			
 			switch (receivedPdu.getPduType()) {
 
 			case LOGIN_REQUEST:
+				// JA
+				 log.debug("Empfangene Nachricht in Switch Case LOGIN_REQUEST");
 				// Login-Request vom Client empfangen
 				loginRequestAction(receivedPdu);
 				break;
 
 			case CHAT_MESSAGE_REQUEST:
+				// JA
+				 log.debug("Empfangene Nachricht in Switch Case CHAT_MESSAGE_REQUEST");
 				// Chat-Nachricht angekommen, an alle verteilen
 				chatMessageRequestAction(receivedPdu);
 				break;
 				
 			case CHAT_MESSAGE_RESPONSE_CONFIRM:
+				// JA
+				 log.debug("Empfangene Nachricht in Switch Case CHAT_MESSAGE_RESPONSE_CONFIRM");
 				// chat Nachricht beim Client angekommen
 				chatMessageConfirmAction(receivedPdu);
 				break;
 
 			case LOGOUT_REQUEST:
+				// JA
+				 log.debug("Empfangene Nachricht in Switch Case LOGOUT_REQUEST");
 				// Logout-Request vom Client empfangen
 				logoutRequestAction(receivedPdu);
 				break;
 
 			 case LOGIN_CONFIRM:
-				 System.out.println("Geht in SwitchCase loginconfirm");
+				 // JA, Syso "umgeschrieben" als log.debug
+				 log.debug("Empfangene Nachricht in Switch Case LOGIN_CONFIRM");
 				 // Login-Confirm von Client empfangen
 				 loginConfirmAction(receivedPdu);
 				 break;
 			 
 			//AG 
 			case LOGOUT_CONFIRM:
+				// JA
+				 log.debug("Empfangene Nachricht in Switch Case LOGOUT_CONFIRM");
 				// Logout-Confirm von Client empfangen
 				logoutConfirmAction(receivedPdu);
 				break;
@@ -489,6 +525,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		}
 	}
 
+	
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
@@ -574,7 +611,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						ExceptionHandler.logExceptionAndTerminate(e); 
 					}
 					
-					log.debug("Login-Response-PDU an Client" + userName + "gesendet");
+					log.debug("Login-Response-PDU an Client " + userName + " gesendet");
 
 					// AG: Zustand des Clients aendern 
 					clients.changeClientStatus(userName, ClientConversationStatus.REGISTERED); 	
@@ -587,6 +624,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		}
 		
 	}
+	
 	private void logoutConfirmAction(ChatPDU receivedPdu) {
 		System.out.println("In logoutConfirmAction");
 //		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); //Ag: falscher Counter
@@ -604,19 +642,37 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				// bekomme die Liste aller Clients AG
 				ClientListEntry clientList = clients.getClient(receivedPdu.getEventUserName());
 				
-				if (clientList != null) {
-					
-					clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERED);
-					
-					// Logout Response senden
+				if (clientList != null) {					
+					// JA: Der Prof hat weiter oben in der Methode logoutRequestAction einen etwas
+					// längeren Kommentar gelassen das er will das der Thread erst eine Zeitlang wartet
+					// bis er die Logout-ResponsePDU abschickt
+					// ich hab das jetzt mal in diese Methode gemacht da es meiner Meinung nach
+					// mehr Sinn macht als da oben
+					try {
+						Thread.sleep(1000);
+						log.debug("Zeit ist abgelaufen! Logout-Response an " + receivedPdu.getEventUserName() + "wird abgeschickt!");
 						sendLogoutResponse(receivedPdu.getEventUserName());
-						System.out.println("Logoutresponse wurde gesendet an" + receivedPdu.getEventUserName());
-					
-					// Worker-Thread des Clients, der den Logout-Request gesendet
-					// hat, auch gleich zum Beenden markieren
+						
+						clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERED);
+						
 						clients.finish(receivedPdu.getUserName());
 						log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
 								+ clients.size());	
+					} catch (Exception e) {
+						ExceptionHandler.logException(e);
+					}
+					
+					
+					// JA auskommentiert
+//					// Logout Response senden
+//						sendLogoutResponse(receivedPdu.getEventUserName());
+//						System.out.println("Logoutresponse wurde gesendet an" + receivedPdu.getEventUserName());
+//					
+//					// Worker-Thread des Clients, der den Logout-Request gesendet
+//					// hat, auch gleich zum Beenden markieren
+//						clients.finish(receivedPdu.getUserName());
+//						log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
+//								+ clients.size());	
 							
 				}
 			}

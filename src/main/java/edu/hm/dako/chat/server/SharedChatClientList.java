@@ -239,7 +239,8 @@ public class SharedChatClientList {
 		
 	}
 	
-	//LS, AG
+	// JA: Methode die die WaitListSSSS zurück gibt die den einen Client noch enthalten
+	//author : LS, AG
 	public synchronized HashSet<String> getWaitLists(String userName) {
 		HashSet<String> waitLists = new HashSet<String>();
 		for (String s : new HashSet<String>(clients.keySet())) {
@@ -429,15 +430,6 @@ public class SharedChatClientList {
 			return 0;
 		}
 	}
-
-	/**
-	 * Erstellt eine Liste aller Clients, die noch ein Event bestaetigen muessen.
-	 * Es werden nur registrierte und sich in Registrierung befindliche Clients
-	 * ausgewaehlt
-	 * 
-	 * @param userName
-	 *          Name des Clients, fuer den die Liste erstellt werden soll
-	 */
 
 	/**
 	 * Erstellt eine Liste aller Clients, die noch ein Event bestaetigen muessen.
