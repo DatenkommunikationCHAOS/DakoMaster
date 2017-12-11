@@ -44,7 +44,9 @@ public class UserInterfaceInputParameters {
 		numberOfMessages = 5;
 		remoteServerPort = 50000;
 		remoteServerAddress = "127.0.0.1";
-		implementationType = ImplementationType.TCPSimpleImplementation;
+		//AL to do: Implementation Type ändern
+		//implementationType = ImplementationType.TCPSimpleImplementation; alte Standardbelegung
+		implementationType = getImplementationType();
 		measurementType = MeasurementType.VarThreads;
 	}
 
@@ -63,6 +65,10 @@ public class UserInterfaceInputParameters {
 		case TCPSimpleImplementation:
 			returnString = "TCPSimple-Implementation";
 			break;
+			
+		case TCPAdvancedImplementation: 
+		    returnString = "TCPAdvenced-Implementation";
+		    break;
 
 		default:
 			break;
