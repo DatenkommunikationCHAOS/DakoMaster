@@ -18,6 +18,7 @@ import edu.hm.dako.chat.client.AbstractChatClient;
 import edu.hm.dako.chat.client.ClientImpl;
 import edu.hm.dako.chat.client.ClientUserInterface;
 import edu.hm.dako.chat.client.SimpleMessageListenerThreadImpl;
+import edu.hm.dako.chat.client.AdvancedMessageListenerThreadImpl;
 import edu.hm.dako.chat.common.ClientConversationStatus;
 import edu.hm.dako.chat.common.ExceptionHandler;
 import edu.hm.dako.chat.common.ImplementationType;
@@ -132,6 +133,20 @@ public class BenchmarkingClientImpl extends AbstractChatClient
 				ExceptionHandler.logException(e);
 			}
 			break;
+			
+			//AL Case für Advanced Implementation
+			
+		case TCPAdvancedImplementation: 
+		    try {
+                messageListenerThread = new AdvancedMessageListenerThreadImpl(this, connection,
+                        sharedClientData);
+                messageListenerThread.start();
+            } catch (Exception e) {
+                ExceptionHandler.logException(e);
+            }
+            break;
+            
+		    
 
 		default:
 			break;
