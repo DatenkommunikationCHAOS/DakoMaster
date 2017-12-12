@@ -45,7 +45,7 @@ public class UserInterfaceInputParameters {
 		remoteServerPort = 50000;
 		remoteServerAddress = "127.0.0.1";
 		//AL to do: Implementation Type ändern
-		//implementationType = ImplementationType.TCPSimpleImplementation; alte Standardbelegung
+//		implementationType = ImplementationType.TCPSimpleImplementation;// alte Standardbelegung
 		implementationType = getImplementationType();
 		measurementType = MeasurementType.VarThreads;
 	}
@@ -65,14 +65,16 @@ public class UserInterfaceInputParameters {
 		case TCPSimpleImplementation:
 			returnString = "TCPSimple-Implementation";
 			break;
-			
-		case TCPAdvancedImplementation: 
+			//case advanced AL
+			case TCPAdvancedImplementation: 
 		    returnString = "TCPAdvenced-Implementation";
 		    break;
 
 		default:
 			break;
 		}
+		//test sysout AL
+	    System.out.println( returnString +"benchmarking client geastartet");
 
 		return returnString;
 	}
