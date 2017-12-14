@@ -1035,12 +1035,13 @@ public class BenchmarkingClientGuiFx2 extends Application
 			iParam.setImplementationType(
 					edu.hm.dako.chat.common.ImplementationType.TCPSimpleImplementation);
 			implType.setTextFill(Color.web(SystemConstants.BLACK_COLOR));
+		}
 			//neue Abfrage ob Advanced oder Simple
-			 if (item.equals(SystemConstants.IMPL_TCP_ADVANCED)) {
+		else if (item.equals(SystemConstants.IMPL_TCP_ADVANCED)) {
 			     iParam.setImplementationType(
 		                    edu.hm.dako.chat.common.ImplementationType.TCPAdvancedImplementation);
 		            implType.setTextFill(Color.web(SystemConstants.BLACK_COLOR));
-			}
+			
 
 		} else {
 			setAlert("Kein Implementierungstyp ausgew\u00c4hlt!");
