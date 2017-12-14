@@ -45,8 +45,8 @@ public class UserInterfaceInputParameters {
 		remoteServerPort = 50000;
 		remoteServerAddress = "127.0.0.1";
 		//AL to do: Implementation Type ändern
-//		implementationType = ImplementationType.TCPSimpleImplementation;// alte Standardbelegung
-		implementationType = getImplementationType();
+		implementationType = ImplementationType.TCPSimpleImplementation;// alte Standardbelegung
+		//implementationType = getImplementationType();
 		measurementType = MeasurementType.VarThreads;
 	}
 

@@ -6,6 +6,8 @@ import java.util.Vector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import edu.hm.dako.chat.client.SharedClientData;
+
 /**
  * <p/>
  * Nachrichtenaufbau fuer Chat-Protokoll (fuer alle Nachrichtentypen: Request,

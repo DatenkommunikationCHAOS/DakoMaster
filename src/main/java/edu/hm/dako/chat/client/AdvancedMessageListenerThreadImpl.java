@@ -76,6 +76,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}
+		sharedClientData.confirmCounter.getAndIncrement();
 	}
 
 	@Override
@@ -111,6 +112,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}
+		sharedClientData.confirmCounter.getAndIncrement();
 	}
 
 	@Override
@@ -170,6 +172,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 		// Empfangene Chat-Nachricht an User Interface zur
 		// Darstellung uebergeben
+		//AL zeile da drunter nur die da drunter eingefügt für counter
+		sharedClientData.confirmCounter.getAndIncrement();
 		userInterface.setMessageLine(receivedPdu.getEventUserName(), (String) receivedPdu.getMessage());
 	}
 
