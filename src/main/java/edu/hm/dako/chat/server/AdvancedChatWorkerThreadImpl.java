@@ -90,8 +90,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		ChatPDU pdu;
 		log.debug("Login-Request-PDU fuer " + receivedPdu.getUserName() + " empfangen");
-		//AL Event Counter für Login Event erhöht
-		eventCounter.getAndIncrement();
 
 		// Neuer Client moechte sich einloggen, Client in Client-Liste
 		// eintragen
@@ -534,7 +532,6 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	    //SharedChatClientList client = SharedChatClientList.getInstance(); //AG auskommentiert
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
 		confirmCounter.getAndIncrement();
-		
 		log.debug("Chat Message Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
 				+ receivedPdu.getUserName() + " empfangen.");
 		System.out.println("chat Message Confirm empfangen von" + userName);
