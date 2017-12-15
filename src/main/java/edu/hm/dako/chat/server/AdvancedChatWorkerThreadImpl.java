@@ -197,6 +197,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 //					+ clients.size());
 		}
 	}
+	
 
 	@Override
 	protected void chatMessageRequestAction(ChatPDU receivedPdu) {
@@ -357,10 +358,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		return false;
 	}
 
-	public void testIfTimeout() {
-		
-	}
 
+	
 	@Override
 	protected void handleIncomingMessage() throws Exception {
 		if (checkIfClientIsDeletable() == true) {
@@ -528,6 +527,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
+	/**
+	 * Verschickt die Bestätigung das alle die Chat-Nachricht erhalten haben
+	 * 
+	 * @param receivedPdu
+	 * 			erhaltende PDU
+	 */
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
 	    //SharedChatClientList client = SharedChatClientList.getInstance(); //AG auskommentiert
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName());
@@ -579,6 +584,13 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	// AG: Methode um Login zu bestätigen, sendet eine responsePDU an den Client, der sich einloggen will
 	// nachdem er sie aus der Liste gelöscht hat AG
+	
+	/**
+	 * Verschickt die Login-Confirm-PDU als Zeichen das sich der Client anmelden darf
+	 * 
+	 * @param receivedPdu
+	 * 				erhaltene PDU
+	 */
 	private void loginConfirmAction(ChatPDU receivedPdu) {
 		
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); //Ag: falscher Counter
@@ -625,6 +637,12 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		
 	}
 	
+	/**
+	 * Verschickt die Logout-Confirm-PDU als Zeichen das sich der Client ausloggen darf
+	 * 
+	 * @param receivedPdu 
+	 * 				erhalltene PDU
+	 */
 	private void logoutConfirmAction(ChatPDU receivedPdu) {
 		System.out.println("In logoutConfirmAction");
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); 
