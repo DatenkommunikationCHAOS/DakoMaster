@@ -87,7 +87,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void loginRequestAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		ChatPDU pdu;
 		log.debug("Login-Request-PDU fuer " + receivedPdu.getUserName() + " empfangen");
 
@@ -116,7 +116,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			Vector<String> clientList = clients.getClientNameList();
 			pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
 			sendLoginListUpdateEvent(pdu);
-
+			log.debug("Erstellte Pdu " + receivedPdu); //AG
 			// Login Response senden
 //			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu); // AG brauchen wir hier nicht
 //			
@@ -151,7 +151,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void logoutRequestAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		ChatPDU pdu;
 		logoutCounter.getAndIncrement();
 		log.debug("Logout-Request von " + receivedPdu.getUserName() + ", LogoutCount = " + logoutCounter.get());
@@ -165,7 +165,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			// Event an Client versenden
 			Vector<String> clientList = clients.getClientNameList();
 			pdu = ChatPDU.createLogoutEventPdu(userName, clientList, receivedPdu);
-
+			log.debug("Erstellte Pdu " + pdu); //AG
 			clients.changeClientStatus(receivedPdu.getUserName(), ClientConversationStatus.UNREGISTERING);
 			sendLoginListUpdateEvent(pdu);
 			serverGuiInterface.decrNumberOfLoggedInClients();
@@ -201,7 +201,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void chatMessageRequestAction(ChatPDU receivedPdu) {
-			
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		ClientListEntry client = null; 
 		clients.setRequestStartTime(receivedPdu.getUserName(), startTime);
 		clients.incrNumberOfReceivedChatMessages(receivedPdu.getUserName());
@@ -219,7 +219,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			Vector<String> sendList = clients.getClientNameList();
 						
 			ChatPDU pdu = ChatPDU.createChatMessageEventPdu(userName, receivedPdu);
-			
+			log.debug("ErstelltePdu " + pdu); //AG
 			// Event an Clients senden
 			for (String s : new Vector<String>(sendList)) {
 				client = clients.getClient(s);
@@ -304,7 +304,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		if (client != null) {
 			ChatPDU responsePdu = ChatPDU.createLogoutResponsePdu(eventInitiatorClient, 0, 0, 0, 0,
 					client.getNumberOfReceivedChatMessages(), clientThreadName);
-
+			log.debug("Erstellte Pdu " + responsePdu); //AG
 			log.debug(eventInitiatorClient + ": SentEvents aus Clientliste: " + client.getNumberOfSentEvents()
 					+ ": ReceivedConfirms aus Clientliste: " + client.getNumberOfReceivedEventConfirms());
 			try {
@@ -592,7 +592,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	 * 				erhaltene PDU
 	 */
 	private void loginConfirmAction(ChatPDU receivedPdu) {
-		
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); //Ag: falscher Counter
 		confirmCounter.getAndIncrement();
 		log.debug("Login Confirm PDU von " + receivedPdu.getEventUserName() + " für User "
@@ -611,7 +611,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				if (clientList != null) {
 					// erstelle response PDU AL
 					ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(receivedPdu.getUserName(), receivedPdu);
-
+					log.debug("Erstellte Pdu " + responsePdu); //AG
 					try {
 						// sende response PDU AL
 						clients.getClient(receivedPdu.getEventUserName()).getConnection().send(responsePdu);
@@ -644,6 +644,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	 * 				erhalltene PDU
 	 */
 	private void logoutConfirmAction(ChatPDU receivedPdu) {
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		System.out.println("In logoutConfirmAction");
 		clients.incrNumberOfReceivedChatEventConfirms(receivedPdu.getEventUserName()); 
 		confirmCounter.getAndIncrement(); 
