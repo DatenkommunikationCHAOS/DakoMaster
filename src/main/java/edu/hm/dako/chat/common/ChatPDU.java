@@ -322,6 +322,7 @@ public class ChatPDU implements Serializable {
 		pdu.setServerThreadName(Thread.currentThread().getName());
 		pdu.setClientThreadName(receivedPdu.getClientThreadName());
 		pdu.setUserName(eventInitiator);
+		pdu.setEventUserName(eventInitiator); //AG hinzugefügt
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 		return pdu;
 	}
