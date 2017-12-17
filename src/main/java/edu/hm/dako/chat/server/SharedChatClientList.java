@@ -241,6 +241,15 @@ public class SharedChatClientList {
 	
 	// JA: Methode die die WaitListSSSS zurück gibt die den einen Client noch enthalten
 	//author : LS, AG
+
+	/**
+	 * Sucht einen Client in allen Waitlists
+	 * 
+	 * @param userName
+	 * 			gesuchter Client
+	 * @return
+	 * 			Waitlists mit dem gesuchten Client
+	 */
 	public synchronized HashSet<String> getWaitLists(String userName) {
 		HashSet<String> waitLists = new HashSet<String>();
 		for (String s : new HashSet<String>(clients.keySet())) {

@@ -185,7 +185,7 @@ public class BenchmarkingClientImpl extends AbstractChatClient
 
 			// TODO Derzeit werden in der Progrssbar Login und Logout nicht
 			// beruecksichtigt
-			// benchmarkingGui.countUpProgressTask();
+			 benchmarkingGui.countUpProgressTask();
 
 			log.debug("User " + userName + " beim Server angemeldet");
 
@@ -224,7 +224,7 @@ public class BenchmarkingClientImpl extends AbstractChatClient
 
 			// TODO: Derzeit werden in der Progressbar Loging und Logout nicht
 			// beruecksichtigt
-			// benchmarkingGui.countUpProgressTask();
+			 benchmarkingGui.countUpProgressTask();
 
 			log.debug(
 					"Anzahl gesendeter Requests: " + sharedStatistics.getNumberOfSentRequests());
