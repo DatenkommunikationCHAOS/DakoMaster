@@ -586,10 +586,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// nachdem er sie aus der Liste gelöscht hat AG
 	
 	/**
-	 * Verschickt die Login-Confirm-PDU als Zeichen das sich der Client anmelden darf
+	 * Verschickt die Login-Response-PDU als Zeichen das sich der Client anmelden darf,
+	 * 				wenn alle Clients das Login-Event bestätigt haben
 	 * 
 	 * @param receivedPdu
-	 * 				erhaltene PDU
+	 * 				erhaltene Login-Confirm-PDU
 	 */
 	private void loginConfirmAction(ChatPDU receivedPdu) {
 		
@@ -638,10 +639,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	}
 	
 	/**
-	 * Verschickt die Logout-Confirm-PDU als Zeichen das sich der Client ausloggen darf
+	 * Verschickt die Logout-Response-PDU als Zeichen das sich der Client ausloggen darf,
+	 * 				wenn alle Clients das Logout-Event bestätigt haben
 	 * 
 	 * @param receivedPdu 
-	 * 				erhalltene PDU
+	 * 				erhalltene Logout-Confirm-PDU
 	 */
 	private void logoutConfirmAction(ChatPDU receivedPdu) {
 		System.out.println("In logoutConfirmAction");
