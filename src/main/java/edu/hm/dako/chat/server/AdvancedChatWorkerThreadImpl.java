@@ -640,7 +640,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	
 	/**
 	 * Verschickt die Logout-Response-PDU als Zeichen das sich der Client ausloggen darf,
-	 * 				wenn alle Clients das Logout-Event bestätigt haben 
+	 * 				wenn alle Clients das Logout-Event bestätigt haben  
 	 * 
 	 * @param receivedPdu 
 	 * 				erhalltene Logout-Confirm-PDU
