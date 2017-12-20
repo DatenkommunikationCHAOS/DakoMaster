@@ -530,10 +530,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
 	/**
-	 * Verschickt die Bestätigung das alle die Chat-Nachricht erhalten haben
+	 * Verschickt die Bestätigung das alle die Chat-Nachricht erhalten haben,
+	 * 				wenn alle Clients das ChatMessage-Event bestätigt haben
 	 * 
 	 * @param receivedPdu
-	 * 			erhaltende PDU
+	 * 			erhaltende ChatMessage-Confirm-PDU
 	 */
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
 	    //SharedChatClientList client = SharedChatClientList.getInstance(); //AG auskommentiert
