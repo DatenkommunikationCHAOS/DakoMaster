@@ -310,7 +310,7 @@ public class ChatPDU implements Serializable {
 	 * Erzeugen einer Login-Response-PDU
 	 * 
 	 * @param eventInitiator
-	 *            Urspruenglicher Client, der Login-Request-PDU gesendet hat
+	 *            Urspruenglicher Client, der Login-Request-PDU gesendet hat 
 	 * @param receivedPdu
 	 *            Empfangene PDU
 	 * @return Erzeugte PDU
@@ -322,7 +322,7 @@ public class ChatPDU implements Serializable {
 		pdu.setServerThreadName(Thread.currentThread().getName());
 		pdu.setClientThreadName(receivedPdu.getClientThreadName());
 		pdu.setUserName(eventInitiator);
-		pdu.setEventUserName(eventInitiator); //AG hinzugefügt
+		pdu.setEventUserName(eventInitiator); //AG hinzugefügt...
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 		return pdu;
 	}
