@@ -592,7 +592,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	/**
 	 * Verschickt die Login-Response-PDU als Zeichen das sich der Client anmelden darf,
 	 * 				wenn alle Clients das Login-Event bestätigt haben
-	 * 
+	 *  
 	 * @param receivedPdu
 	 * 				erhaltene Login-Confirm-PDU
 	 */
