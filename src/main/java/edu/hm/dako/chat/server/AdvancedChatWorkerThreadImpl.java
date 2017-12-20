@@ -530,10 +530,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// Methode um Messages zu confirmen, sendet eine responsePDU an die CLients,
 	// nachdem er sie aus der Liste gelöscht hat AL
 	/**
-	 * Verschickt die Bestätigung das alle die Chat-Nachricht erhalten haben
+	 * Verschickt die Bestätigung das alle die Chat-Nachricht erhalten haben,
+	 * 				wenn alle Clients das ChatMessage-Event bestätigt haben
 	 * 
 	 * @param receivedPdu
-	 * 			erhaltende PDU
+	 * 			erhaltende ChatMessage-Confirm-PDU
 	 */
 	private void chatMessageConfirmAction(ChatPDU receivedPdu) {
 	    //SharedChatClientList client = SharedChatClientList.getInstance(); //AG auskommentiert
@@ -590,10 +591,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	// nachdem er sie aus der Liste gelöscht hat AG
 	
 	/**
-	 * Verschickt die Login-Confirm-PDU als Zeichen das sich der Client anmelden darf
-	 * 
+	 * Verschickt die Login-Response-PDU als Zeichen das sich der Client anmelden darf,
+	 * 				wenn alle Clients das Login-Event bestätigt haben
+	 *  
 	 * @param receivedPdu
-	 * 				erhaltene PDU
+	 * 				erhaltene Login-Confirm-PDU
 	 */
 	private void loginConfirmAction(ChatPDU receivedPdu) {
 		log.debug("Empfangene Pdu " + receivedPdu); //AG
@@ -642,10 +644,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	}
 	
 	/**
-	 * Verschickt die Logout-Confirm-PDU als Zeichen das sich der Client ausloggen darf
+	 * Verschickt die Logout-Response-PDU als Zeichen das sich der Client ausloggen darf,
+	 * 				wenn alle Clients das Logout-Event bestätigt haben  
 	 * 
-	 * @param receivedPdu 
-	 * 				erhalltene PDU
+	 * @param receivedPdu
+	 * 				erhalltene Logout-Confirm-PDU
 	 */
 	private void logoutConfirmAction(ChatPDU receivedPdu) {
 		log.debug("Empfangene Pdu " + receivedPdu); //AG
