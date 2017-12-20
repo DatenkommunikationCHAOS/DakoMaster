@@ -32,7 +32,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void loginResponseAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu "+ receivedPdu); //AG
 		if (receivedPdu.getErrorCode() == ChatPDU.LOGIN_ERROR) {
 
 			// Login hat nicht funktioniert
@@ -61,14 +61,15 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void loginEventAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu "+ receivedPdu);
 		// Eventzaehler fuer Testzwecke erhoehen
 		sharedClientData.eventCounter.getAndIncrement();
 		int events = SharedClientData.loginEvents.incrementAndGet();
 
 		log.debug(sharedClientData.userName + " erhaelt LoginEvent, LoginEventCounter: " + events);
-		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(receivedPdu.getEventUserName(), receivedPdu); // AG Erstellen von ConfirmPdu
+		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName, receivedPdu); //AG geändert von recPdu.getEventUserName()
 		log.debug("Login Confirm Pdu wurde erstellt."); // AG
+		log.debug("Erstellte Pdu "+ loginConfirmPdu); //AG
 		try {
 			connection.send(loginConfirmPdu); // AG Senden von ConfirmPdu
 			log.debug("Login Confirm Pdu wurde gesendet von " + loginConfirmPdu.getUserName()); // AG
@@ -81,7 +82,8 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void logoutResponseAction(ChatPDU receivedPdu) {
-// LS, AG eventuell noch eine Abdeckung für den speziellen Logoutfall? 
+// LS, AG eventuell noch eine Abdeckung für den speziellen Logoutfall?
+		log.debug("Empfangene Pdu "+ receivedPdu); //AG
 		log.debug(
 				sharedClientData.userName + " empfaengt Logout-Response-PDU fuer Client " + receivedPdu.getUserName());
 		sharedClientData.status = ClientConversationStatus.UNREGISTERED;
@@ -97,14 +99,14 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void logoutEventAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu "+ receivedPdu); //AG
 		// Eventzaehler fuer Testzwecke erhoehen
 		sharedClientData.eventCounter.getAndIncrement();
 		int events = SharedClientData.logoutEvents.incrementAndGet();
 
 		log.debug("LogoutEventCounter: " + events);
-		ChatPDU logoutConfirmPdu = ChatPDU.createLogoutEventConfirm(receivedPdu.getEventUserName(), receivedPdu);
-
+		ChatPDU logoutConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName, receivedPdu); //AG geändert von receivedPdu.getEventUserName()
+		log.debug("Erstellte Pdu: " + logoutConfirmPdu); //AG
 		try {
 			connection.send(logoutConfirmPdu);
 			System.out.println("Logout Confirm Pdu gesendet von" + "für Client " + receivedPdu.getEventUserName());
@@ -117,7 +119,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void chatMessageResponseAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		log.debug("Sequenznummer der Chat-Response-PDU " + receivedPdu.getUserName() + ": "
 				+ receivedPdu.getSequenceNumber() + ", Messagecounter: " + sharedClientData.messageCounter.get());
 
@@ -145,7 +147,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void chatMessageEventAction(ChatPDU receivedPdu) {
-
+		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		log.debug("Chat-Message-Event-PDU von " + receivedPdu.getEventUserName() + " empfangen");
 
 		// Eventzaehler fuer Testzwecke erhoehen
@@ -157,7 +159,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		// created ConfirmPDU und sendet diese weiter AL
 
 		ChatPDU ConfirmPDU = ChatPDU.createMessageConfirmPdu(sharedClientData.userName, receivedPdu);
-
+		log.debug("Erstellte Pdu " + ConfirmPDU); //AG
 		try {
 			connection.send(ConfirmPDU);
 			// Liste durchgehen und an jeden einzelnen senden AL
