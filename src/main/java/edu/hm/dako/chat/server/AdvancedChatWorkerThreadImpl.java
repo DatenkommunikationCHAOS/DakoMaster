@@ -414,37 +414,38 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					finished = true;
 				} 
 				//AG eventuell hier noch was für logout
-			} else { //LS, AG
-				if (clients.deletable(receivedPdu.getUserName())== false){
-					HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
-					clients.deleteClientWithoutCondition(receivedPdu.getUserName());
-					for (String s: waitList) {
-						// JA: Wenn die WarteListe gleich 0 ist, wie sollte der Client der drinnen ist noch einen Status haben?
-						// Bzw da müsste doch rein theoretisch kein Client mehr drinnen sein? -> != 0
-						if (clients.getWaitListSize(s) == 0) {
-							if (clients.getClientStatus(s)== ClientConversationStatus.REGISTERING) {
-								ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(s, receivedPdu);
-								clients.getClient(s).getConnection().send(responsePdu);
-							} else if (clients.getClientStatus(s) == ClientConversationStatus.REGISTERED) {
-								ClientListEntry c = clients.getClient(s);
-								ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getEventUserName(), 0, 0, 0, 0, //Ag geändert von UserName
-										c.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-										(System.nanoTime() - c.getStartTime()));
-								clients.getClient(s).getConnection().send(responsePdu);
-							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERING) {
-								sendLogoutResponse(s);
-							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERED) {
-							// JA
-							// Fall: Client-Status schon disconnectet zum Server dann gezwungermaßen löschen
-							// Status gleich UNREGISTERED
-//								waitList.deletWaitListEntry()
-							
+			} else { 
+				//LS, AG
+//				if (clients.deletable(receivedPdu.getUserName())== false){
+//					HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
+//					clients.deleteClientWithoutCondition(receivedPdu.getUserName());
+//					for (String s: waitList) {
+//						// JA: Wenn die WarteListe gleich 0 ist, wie sollte der Client der drinnen ist noch einen Status haben?
+//						// Bzw da müsste doch rein theoretisch kein Client mehr drinnen sein? -> != 0
+//						if (clients.getWaitListSize(s) == 0) {
+//							if (clients.getClientStatus(s)== ClientConversationStatus.REGISTERING) {
+//								ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(s, receivedPdu);
+//								clients.getClient(s).getConnection().send(responsePdu);
+//							} else if (clients.getClientStatus(s) == ClientConversationStatus.REGISTERED) {
+//								ClientListEntry c = clients.getClient(s);
+//								ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getEventUserName(), 0, 0, 0, 0, //Ag geändert von UserName
+//										c.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+//										(System.nanoTime() - c.getStartTime()));
+//								clients.getClient(s).getConnection().send(responsePdu);
+//							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERING) {
+//								sendLogoutResponse(s);
+//							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERED) {
+//							// JA
+//							// Fall: Client-Status schon disconnectet zum Server dann gezwungermaßen löschen
+//							// Status gleich UNREGISTERED
+////								waitList.deletWaitListEntry()
+//							
 
-							}
-						}
-					}
+//							}
+//						}
+//					}
 					
-				}
+//				}
 			}	
 			
 			return;
@@ -685,7 +686,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						log.debug(clients.getClientNameList()); //AG
 						clients.changeClientStatus(receivedPdu.getEventUserName(), ClientConversationStatus.UNREGISTERED); //AG geändert in eventusername von userName
 						
-						clients.finish(receivedPdu.getUserName());
+						clients.finish(receivedPdu.getEventUserName());
 						log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
 								+ clients.size());	
 					} catch (Exception e) {
