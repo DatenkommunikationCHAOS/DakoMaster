@@ -66,6 +66,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		pdu.setClients(clientList);
 
 		Vector<String> clientList2 = clients.getClientNameList();
+		
+		// Login- oder Logout-Event-PDU an alle aktiven Clients senden AJ
 		for (String s : new Vector<String>(clientList2)) {
 			log.debug("Fuer " + s + " wird Login- oder Logout-Event-PDU an alle aktiven Clients gesendet");
 
@@ -87,9 +89,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void loginRequestAction(ChatPDU receivedPdu) {
-		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		ChatPDU pdu;
-		log.debug("Login-Request-PDU fuer " + receivedPdu.getUserName() + " empfangen");
+		log.debug("Login-Request-PDU für " + receivedPdu.getUserName() + " empfangen" + "\n" + receivedPdu );
 
 		// Neuer Client moechte sich einloggen, Client in Client-Liste
 		// eintragen
@@ -107,16 +108,19 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			log.debug("Laenge der Clientliste: " + clients.size());
 			serverGuiInterface.incrNumberOfLoggedInClients();
 
-			// AL Waitlist erstellen mit allen Clients
+			// Warteliste der eingeloggten User ermitteln AJ
 			clients.createWaitList(userName);
 
 			// Login-Event an alle Clients (auch an den gerade aktuell
 			// anfragenden) senden
-
 			Vector<String> clientList = clients.getClientNameList();
 			pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
 			sendLoginListUpdateEvent(pdu);
-			log.debug("Erstellte Pdu " + pdu); //AG
+			log.debug("Login-Event-PDU für " + receivedPdu.getEventUserName() + "an alle angemeldeten und"
+					+ "sich anmeldenden Clients senden. \n" + pdu); //AJ
+
+			
+			
 			// Login Response senden
 //			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu); // AG brauchen wir hier nicht
 //			
