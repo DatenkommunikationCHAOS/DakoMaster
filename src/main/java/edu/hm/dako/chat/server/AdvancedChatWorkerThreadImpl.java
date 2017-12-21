@@ -66,6 +66,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		pdu.setClients(clientList);
 
 		Vector<String> clientList2 = clients.getClientNameList();
+		
+		// Login- oder Logout-Event-PDU an alle aktiven Clients senden AJ
 		for (String s : new Vector<String>(clientList2)) {
 			log.debug("Fuer " + s + " wird Login- oder Logout-Event-PDU an alle aktiven Clients gesendet");
 
@@ -87,9 +89,8 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 	@Override
 	protected void loginRequestAction(ChatPDU receivedPdu) {
-		log.debug("Empfangene Pdu " + receivedPdu); //AG
 		ChatPDU pdu;
-		log.debug("Login-Request-PDU fuer " + receivedPdu.getUserName() + " empfangen");
+		log.debug("Login-Request-PDU für " + receivedPdu.getUserName() + " empfangen" + "\n" + receivedPdu );
 
 		// Neuer Client moechte sich einloggen, Client in Client-Liste
 		// eintragen
@@ -107,16 +108,19 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 			log.debug("Laenge der Clientliste: " + clients.size());
 			serverGuiInterface.incrNumberOfLoggedInClients();
 
-			// AL Waitlist erstellen mit allen Clients
+			// Warteliste der eingeloggten User ermitteln AJ
 			clients.createWaitList(userName);
 
 			// Login-Event an alle Clients (auch an den gerade aktuell
 			// anfragenden) senden
-
 			Vector<String> clientList = clients.getClientNameList();
 			pdu = ChatPDU.createLoginEventPdu(userName, clientList, receivedPdu);
 			sendLoginListUpdateEvent(pdu);
-			log.debug("Erstellte Pdu " + pdu); //AG
+			log.debug("Login-Event-PDU für " + receivedPdu.getEventUserName() + "an alle angemeldeten und"
+					+ "sich anmeldenden Clients senden. \n" + pdu); //AJ
+
+			
+			
 			// Login Response senden
 //			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu); // AG brauchen wir hier nicht
 //			
@@ -410,37 +414,38 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					finished = true;
 				} 
 				//AG eventuell hier noch was für logout
-			} else { //LS, AG
-				if (clients.deletable(receivedPdu.getUserName())== false){
-					HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
-					clients.deleteClientWithoutCondition(receivedPdu.getUserName());
-					for (String s: waitList) {
-						// JA: Wenn die WarteListe gleich 0 ist, wie sollte der Client der drinnen ist noch einen Status haben?
-						// Bzw da müsste doch rein theoretisch kein Client mehr drinnen sein? -> != 0
-						if (clients.getWaitListSize(s) == 0) {
-							if (clients.getClientStatus(s)== ClientConversationStatus.REGISTERING) {
-								ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(s, receivedPdu);
-								clients.getClient(s).getConnection().send(responsePdu);
-							} else if (clients.getClientStatus(s) == ClientConversationStatus.REGISTERED) {
-								ClientListEntry c = clients.getClient(s);
-								ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getEventUserName(), 0, 0, 0, 0, //Ag geändert von UserName
-										c.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-										(System.nanoTime() - c.getStartTime()));
-								clients.getClient(s).getConnection().send(responsePdu);
-							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERING) {
-								sendLogoutResponse(s);
-							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERED) {
-							// JA
-							// Fall: Client-Status schon disconnectet zum Server dann gezwungermaßen löschen
-							// Status gleich UNREGISTERED
-//								waitList.deletWaitListEntry()
-							
+			} else { 
+				//LS, AG
+//				if (clients.deletable(receivedPdu.getUserName())== false){
+//					HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
+//					clients.deleteClientWithoutCondition(receivedPdu.getUserName());
+//					for (String s: waitList) {
+//						// JA: Wenn die WarteListe gleich 0 ist, wie sollte der Client der drinnen ist noch einen Status haben?
+//						// Bzw da müsste doch rein theoretisch kein Client mehr drinnen sein? -> != 0
+//						if (clients.getWaitListSize(s) == 0) {
+//							if (clients.getClientStatus(s)== ClientConversationStatus.REGISTERING) {
+//								ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(s, receivedPdu);
+//								clients.getClient(s).getConnection().send(responsePdu);
+//							} else if (clients.getClientStatus(s) == ClientConversationStatus.REGISTERED) {
+//								ClientListEntry c = clients.getClient(s);
+//								ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getEventUserName(), 0, 0, 0, 0, //Ag geändert von UserName
+//										c.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
+//										(System.nanoTime() - c.getStartTime()));
+//								clients.getClient(s).getConnection().send(responsePdu);
+//							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERING) {
+//								sendLogoutResponse(s);
+//							} else if (clients.getClientStatus(s) == ClientConversationStatus.UNREGISTERED) {
+//							// JA
+//							// Fall: Client-Status schon disconnectet zum Server dann gezwungermaßen löschen
+//							// Status gleich UNREGISTERED
+////								waitList.deletWaitListEntry()
+//							
 
-							}
-						}
-					}
+//							}
+//						}
+//					}
 					
-				}
+//				}
 			}	
 			
 			return;
@@ -681,7 +686,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						log.debug(clients.getClientNameList()); //AG
 						clients.changeClientStatus(receivedPdu.getEventUserName(), ClientConversationStatus.UNREGISTERED); //AG geändert in eventusername von userName
 						
-						clients.finish(receivedPdu.getUserName());
+						clients.finish(receivedPdu.getEventUserName());
 						log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
 								+ clients.size());	
 					} catch (Exception e) {
