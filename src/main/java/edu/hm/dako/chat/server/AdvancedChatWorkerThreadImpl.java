@@ -491,9 +491,9 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				chatMessageRequestAction(receivedPdu);
 				break;
 				
-			case CHAT_MESSAGE_RESPONSE_CONFIRM:
+			case CHAT_MESSAGE_CONFIRM:
 				// JA
-				 log.debug("Empfangene Nachricht in Switch Case CHAT_MESSAGE_RESPONSE_CONFIRM");
+				 log.debug("Empfangene Nachricht in Switch Case CHAT_MESSAGE_CONFIRM");
 				// chat Nachricht beim Client angekommen
 				chatMessageConfirmAction(receivedPdu);
 				break;
@@ -566,7 +566,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					// erstelle response PDU AL
 					ChatPDU responsePdu = ChatPDU.createChatMessageResponsePdu(receivedPdu.getEventUserName(), 0, 0, 0, 0,
 							clientList.getNumberOfReceivedChatMessages(), receivedPdu.getClientThreadName(),
-							(System.nanoTime() - clientList.getStartTime()));
+							(System.nanoTime() - clientList.getStartTime())); //JA: noch in die Klamma: receivedPdu
 					log.debug("Erstellte Pdu " + responsePdu); //AG
 					//AG: Übernahme aus loginRequestAction()
 					if (responsePdu.getServerTime() / 1000000 > 100) {
