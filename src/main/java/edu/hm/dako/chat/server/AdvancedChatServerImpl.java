@@ -21,7 +21,7 @@ import javafx.concurrent.Task;
  */
 public class AdvancedChatServerImpl extends AbstractChatServer {
 
-    private static Log log = LogFactory.getLog(SimpleChatServerImpl.class); //AG ändern? 
+    private static Log log = LogFactory.getLog(SimpleChatServerImpl.class);
 
     // Threadpool fuer Worker-Threads
     private final ExecutorService executorService;
