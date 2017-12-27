@@ -118,7 +118,8 @@ public class SimpleChatWorkerThreadImpl extends AbstractWorkerThread {
 
 			// Login Response senden
 			ChatPDU responsePdu = ChatPDU.createLoginResponsePdu(userName, receivedPdu);
-
+			log.debug(responsePdu); // AG -> wieder löschen
+ 
 			try {
 				clients.getClient(userName).getConnection().send(responsePdu);
 			} catch (Exception e) {

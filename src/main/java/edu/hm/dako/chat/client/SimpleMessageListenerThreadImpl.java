@@ -58,7 +58,7 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 
 	@Override
 	protected void loginEventAction(ChatPDU receivedPdu) {
-
+		log.debug(receivedPdu); 
 		// Eventzaehler fuer Testzwecke erhoehen
 		sharedClientData.eventCounter.getAndIncrement();
 		int events = SharedClientData.loginEvents.incrementAndGet();
@@ -220,7 +220,6 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 					switch (receivedPdu.getPduType()) {
 
 					case CHAT_MESSAGE_RESPONSE:
-
 						// Die eigene zuletzt gesendete Chat-Nachricht wird vom
 						// Server bestaetigt.
 						chatMessageResponseAction(receivedPdu);
@@ -228,13 +227,10 @@ public class SimpleMessageListenerThreadImpl extends AbstractMessageListenerThre
 					
 
 					case CHAT_MESSAGE_EVENT:
-						// Chat-Nachricht vom Server gesendet --> nicht die eigene sondern eine andere von einem anderen Client
+						// Chat-Nachricht vom Server gesendet 
 						chatMessageEventAction(receivedPdu);
 						break;
-						
-					//todo: 
-					//case --> anderer Client hat Nachricht bekommen 
-						
+								
 						
 					case LOGIN_EVENT:
 						// Meldung vom Server, dass sich die Liste der

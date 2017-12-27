@@ -19,7 +19,7 @@ import edu.hm.dako.chat.common.SharedClientStatistics;
 /**
  * Basisklasse zum Starten eines Benchmarks
  *
- * @author Mandl
+ * @author Mandl 
  */
 public class BenchmarkingClientCoordinator extends Thread
 		implements BenchmarkingStartInterface, ClientUserInterface {
