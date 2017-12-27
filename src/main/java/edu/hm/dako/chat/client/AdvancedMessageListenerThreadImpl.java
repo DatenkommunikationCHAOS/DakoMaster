@@ -32,7 +32,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void loginResponseAction(ChatPDU receivedPdu) {
-		log.debug("Empfangene Pdu "+ receivedPdu); //AG
+		log.debug("Empfangene Pdu "+ receivedPdu); 
 		if (receivedPdu.getErrorCode() == ChatPDU.LOGIN_ERROR) {
 
 			// Login hat nicht funktioniert
@@ -65,15 +65,18 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		// Eventzaehler fuer Testzwecke erhoehen
 		sharedClientData.eventCounter.getAndIncrement();
 		int events = SharedClientData.loginEvents.incrementAndGet();
-
 		log.debug(sharedClientData.userName + " erhaelt LoginEvent, LoginEventCounter: " + events);
-		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName, receivedPdu); //AG geändert von recPdu.getEventUserName()
-		log.debug("Login Confirm Pdu wurde erstellt."); // AG
-		log.debug("Erstellte Pdu "+ loginConfirmPdu); //AG
+		
+		//LoginConfirmPDU erstellen
+		ChatPDU loginConfirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName, receivedPdu); 
+		log.debug("Login Confirm Pdu wurde erstellt."); 
+		log.debug("Erstellte Pdu "+ loginConfirmPdu);
+		
 		try {
-			connection.send(loginConfirmPdu); // AG Senden von ConfirmPdu
-			log.debug("Login Confirm Pdu wurde gesendet von " + loginConfirmPdu.getUserName()); // AG
-			handleUserListEvent(receivedPdu); // AG: Brauchen wir für Userlist in Gui anzeigen
+			// Senden der LoginConfirmPDU
+			connection.send(loginConfirmPdu); 
+			log.debug("Login Confirm Pdu wurde gesendet von " + loginConfirmPdu.getUserName()); 
+			handleUserListEvent(receivedPdu); 
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
 		}
@@ -82,8 +85,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void logoutResponseAction(ChatPDU receivedPdu) {
-// LS, AG eventuell noch eine Abdeckung für den speziellen Logoutfall?
-		log.debug("Empfangene Pdu "+ receivedPdu); //AG
+		log.debug("Empfangene Pdu "+ receivedPdu); 
 		log.debug(
 				sharedClientData.userName + " empfaengt Logout-Response-PDU fuer Client " + receivedPdu.getUserName());
 		sharedClientData.status = ClientConversationStatus.UNREGISTERED;
@@ -99,17 +101,19 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void logoutEventAction(ChatPDU receivedPdu) {
-		log.debug("Empfangene Pdu "+ receivedPdu); //AG
+		log.debug("Empfangene Pdu "+ receivedPdu); 
 		// Eventzaehler fuer Testzwecke erhoehen
 		sharedClientData.eventCounter.getAndIncrement();
 		int events = SharedClientData.logoutEvents.incrementAndGet();
-
 		log.debug("LogoutEventCounter: " + events);
-		ChatPDU logoutConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName, receivedPdu); //AG geändert von receivedPdu.getEventUserName()
-		log.debug("Erstellte Pdu: " + logoutConfirmPdu); //AG
+		
+		//LogoutConfirmPdu erstellen
+		ChatPDU logoutConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName, receivedPdu); 
+		log.debug("Erstellte Pdu: " + logoutConfirmPdu); 
 		try {
+			//Senden der LogoutConfirmPdu
 			connection.send(logoutConfirmPdu);
-			System.out.println("Logout Confirm Pdu gesendet von" + "für Client " + receivedPdu.getEventUserName());
+			log.debug("Logout Confirm Pdu gesendet von"+ sharedClientData.userName + "für Client " + receivedPdu.getEventUserName());
 			handleUserListEvent(receivedPdu);
 		} catch (Exception e) {
 			ExceptionHandler.logException(e);
@@ -119,7 +123,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void chatMessageResponseAction(ChatPDU receivedPdu) {
-		log.debug("Empfangene Pdu " + receivedPdu); //AG
+		log.debug("Empfangene Pdu " + receivedPdu); 
 		log.debug("Sequenznummer der Chat-Response-PDU " + receivedPdu.getUserName() + ": "
 				+ receivedPdu.getSequenceNumber() + ", Messagecounter: " + sharedClientData.messageCounter.get());
 
@@ -147,7 +151,7 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 	@Override
 	protected void chatMessageEventAction(ChatPDU receivedPdu) {
-		log.debug("Empfangene Pdu " + receivedPdu); //AG
+		log.debug("Empfangene Pdu " + receivedPdu); 
 		log.debug("Chat-Message-Event-PDU von " + receivedPdu.getEventUserName() + " empfangen");
 
 		// Eventzaehler fuer Testzwecke erhoehen
@@ -156,26 +160,20 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 
 		log.debug("MessageEventCounter: " + events);
 
-		// created ConfirmPDU und sendet diese weiter AL
-
+		// ChatMessageConfirmPDU erstellen
 		ChatPDU ConfirmPDU = ChatPDU.createMessageConfirmPdu(sharedClientData.userName, receivedPdu);
-		log.debug("Erstellte Pdu " + ConfirmPDU); //AG
+		log.debug("Erstellte Pdu " + ConfirmPDU);
 		try {
-			connection.send(ConfirmPDU);
-			// Liste durchgehen und an jeden einzelnen senden AL
-			// sharedClientData.confirmCounter.getAndIncrement(); funktioniert nicht
-			System.out.println("MessageConfirm gesendet" + ConfirmPDU);
-			log.debug("Confirm gesendet" + ConfirmPDU);
+			// ChatMessageConfirmPdu senden
+			connection.send(ConfirmPDU);	
+			log.debug("ChatMessageConfirm gesendet" + ConfirmPDU);
 		} catch (Exception e) {
 			System.out.println("Confirm nicht möglich");
-			// throw new IO Exception
-
 		}
-
-		// Empfangene Chat-Nachricht an User Interface zur
-		// Darstellung uebergeben
-		//AL zeile da drunter nur die da drunter eingefügt für counter
+		// Confirm Counter für Benchmarking erhöhen
 		sharedClientData.confirmCounter.getAndIncrement();
+		
+		// Empfangene Chat-Nachricht an User Interface zur Darstellung uebergeben		
 		userInterface.setMessageLine(receivedPdu.getEventUserName(), (String) receivedPdu.getMessage());
 	}
 
@@ -242,24 +240,15 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 					switch (receivedPdu.getPduType()) {
 
 					case CHAT_MESSAGE_RESPONSE:
-
 						// Die eigene zuletzt gesendete Chat-Nachricht wird vom
 						// Server bestaetigt.
 						chatMessageResponseAction(receivedPdu);
 						break;
 
 					case CHAT_MESSAGE_EVENT:
-						// Chat-Nachricht vom Server gesendet --> nicht die eigene sondern eine andere
-						// von einem anderen Client
+						// Chat-Nachricht vom Server gesendet 
 						chatMessageEventAction(receivedPdu);
 						break;
-
-					// todo:
-					// case --> anderer Client hat Nachricht bekommen AL
-
-					// case CHAT_MESSAGE_RESPONSE_CONFIRM:
-					// chatMessageEventAction(receivedPdu);
-					// break;
 
 					case LOGIN_EVENT:
 						// Meldung vom Server, dass sich die Liste der
@@ -333,30 +322,6 @@ public class AdvancedMessageListenerThreadImpl extends AbstractMessageListenerTh
 		}
 		log.debug("Ordnungsgemaesses Ende des AdvancedMessageListener-Threads fuer User" + sharedClientData.userName
 				+ ", Status: " + sharedClientData.status);
-	} // run
+	} 
 
-//	protected void loginConfirmAction(ChatPDU receivedPdu) {
-//		ChatPDU confirmPdu = ChatPDU.createLoginEventConfirm(sharedClientData.userName, receivedPdu);
-//
-//		try {
-//			connection.send(confirmPdu);
-//			System.out.println("Login Confirm gesendet");
-//			log.debug("Login-Confirm-PDU fuer Client " + sharedClientData.userName + " an Server gesendet");
-//		} catch (Exception e) {
-//			ExceptionHandler.logException(e);
-//		}
-//	}
-
-//	protected void sendlogoutConfirm(ChatPDU receivedPdu) {
-//		ChatPDU ConfirmPdu = ChatPDU.createLogoutEventConfirm(sharedClientData.userName, receivedPdu);
-//
-//		try {
-//			connection.send(ConfirmPdu);
-//			log.debug("Logout-Confirm-PDU fuer Client " + sharedClientData.userName + " an Server gesendet");
-//		} catch (Exception e) {
-//			ExceptionHandler.logException(e);
-//		}
-//	}
 }
-
-////////////////////////////////////////////////

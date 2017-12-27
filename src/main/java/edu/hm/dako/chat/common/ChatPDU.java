@@ -125,7 +125,6 @@ public class ChatPDU implements Serializable {
 	}
 
 	public static void printPdu(ChatPDU pdu) {
-		// System.out.println(pdu);
 		log.debug(pdu);
 	}
 
@@ -322,7 +321,7 @@ public class ChatPDU implements Serializable {
 		pdu.setServerThreadName(Thread.currentThread().getName());
 		pdu.setClientThreadName(receivedPdu.getClientThreadName());
 		pdu.setUserName(eventInitiator);
-		pdu.setEventUserName(eventInitiator); // AG hinzugefügt...
+		pdu.setEventUserName(eventInitiator); // EventUserName setzten
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 		return pdu;
 	}
@@ -411,7 +410,10 @@ public class ChatPDU implements Serializable {
 	public static ChatPDU createChatMessageResponsePdu(String eventInitiator, long numberOfSentEvents,
 			long numberOfLostEventConfirms, long numberOfReceivedEventConfirms, long numberOfRetries,
 			long numberOfReceivedChatMessages, String clientThreadName, long serverTime) {
-		// JA noch in die Klamma ChatPDU receivedPdu
+		// Um Nachricht in ResponsePdu anzeigen zu lassen müsste man die receivedPdu als
+		// Parameter mitgeben. Dann wären aber Änderungen im SimpleChatWorkerThreadImpl
+		// und AdvancedChatWorkerThreadImpl bei der Erstellung von der ResponsePdu
+		// nötig. Da man keine Änderungen im Simple vornehmen soll haben wir das hier nur auskommentiert.
 
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.CHAT_MESSAGE_RESPONSE);
@@ -421,7 +423,7 @@ public class ChatPDU implements Serializable {
 		pdu.setEventUserName(eventInitiator);
 		pdu.setUserName(eventInitiator);
 
-		// pdu.setMessage(receivedPdu.getMessage()); // JA
+		// pdu.setMessage(receivedPdu.getMessage());
 
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 
@@ -460,7 +462,6 @@ public class ChatPDU implements Serializable {
 		return pdu;
 	}
 
-	// AL neue Confirm PDU erstellen
 	/**
 	 * Erzeugen einer Chat-Message-Confirm-PDU
 	 * 
@@ -478,13 +479,11 @@ public class ChatPDU implements Serializable {
 		pdu.setUserName(username);
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 		pdu.setEventUserName(receivedPdu.getEventUserName());
-		pdu.setMessage(receivedPdu.getMessage()); // JA
+		pdu.setMessage(receivedPdu.getMessage());
 		return pdu;
 
 	}
 
-	// Methode für Login und Logout
-	// AG
 	/**
 	 * Erzeugen einer Login-Event-Confirm-PDU
 	 * 
@@ -497,16 +496,15 @@ public class ChatPDU implements Serializable {
 	public static ChatPDU createLoginEventConfirm(String username, ChatPDU receivedPdu) {
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.LOGIN_CONFIRM);
-		pdu.setUserName(username); // Name vom User, der den Confirm also diese Pdu zum Server schickt?
-		pdu.setEventUserName(receivedPdu.getEventUserName()); // Name des Clients, von dem ein Event initiiert wurde
-		pdu.setServerThreadName(receivedPdu.getServerThreadName()); // Server an den man es schicken muss?
-		pdu.setClientThreadName(receivedPdu.getClientThreadName()); // Name des Client-Threads, der den Request absendet
+		pdu.setUserName(username);
+		pdu.setEventUserName(receivedPdu.getEventUserName());
+		pdu.setServerThreadName(receivedPdu.getServerThreadName());
+		pdu.setClientThreadName(receivedPdu.getClientThreadName());
 		pdu.setClientStatus(ClientConversationStatus.REGISTERING);
 		return pdu;
 
 	}
 
-	// AG
 	/**
 	 * Erzeugen einer Logout-Event-Confirm-PDU
 	 * 

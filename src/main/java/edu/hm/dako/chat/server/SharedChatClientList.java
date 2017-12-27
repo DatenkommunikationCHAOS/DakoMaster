@@ -61,12 +61,11 @@ public class SharedChatClientList {
 	 * Status eines Clients veraendern
 	 * 
 	 * @param userName
-	 *          Name des Users (Clients)
+	 *            Name des Users (Clients)
 	 * @param newStatus
-	 *          Neuer Status
+	 *            Neuer Status
 	 */
-	public synchronized void changeClientStatus(String userName,
-			ClientConversationStatus newStatus) {
+	public synchronized void changeClientStatus(String userName, ClientConversationStatus newStatus) {
 
 		ClientListEntry client = clients.get(userName);
 		client.setStatus(newStatus);
@@ -78,7 +77,7 @@ public class SharedChatClientList {
 	 * Lesen des Conversation-Status fuer einen Client
 	 * 
 	 * @param userName
-	 *          Name des Users (Clients)
+	 *            Name des Users (Clients)
 	 * @return Conversation-Status des Clients
 	 */
 	public synchronized ClientConversationStatus getClientStatus(String userName) {
@@ -95,7 +94,7 @@ public class SharedChatClientList {
 	 * Client auslesen
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @return Referenz auf den gesuchten Client
 	 */
 	public synchronized ClientListEntry getClient(String userName) {
@@ -142,7 +141,7 @@ public class SharedChatClientList {
 	 * Prueft, ob ein Client in der Userliste ist
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @return
 	 */
 	public synchronized boolean existsClient(String userName) {
@@ -163,9 +162,9 @@ public class SharedChatClientList {
 	 * Legt einen neuen Client an
 	 * 
 	 * @param userName
-	 *          Name des neuen Clients
+	 *            Name des neuen Clients
 	 * @param client
-	 *          Client-Daten
+	 *            Client-Daten
 	 */
 	public synchronized void createClient(String userName, ClientListEntry client) {
 
@@ -176,9 +175,9 @@ public class SharedChatClientList {
 	 * Aktualisierung eines vorhandenen Clients
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @param client
-	 *          Client-Daten
+	 *            Client-Daten
 	 */
 	public synchronized void updateClient(String userName, ClientListEntry client) {
 
@@ -197,7 +196,7 @@ public class SharedChatClientList {
 	 * werden kann.
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @return true Loeschen moeglich, sonst false
 	 */
 	public synchronized boolean deletable(String userName) {
@@ -206,8 +205,8 @@ public class SharedChatClientList {
 			ClientListEntry client = (ClientListEntry) clients.get(s);
 			if (client.getWaitList().contains(userName)) {
 				// Client noch in einer Warteliste
-				log.debug("Loeschen nicht moeglich, da Client " + userName
-						+ " noch in der Warteliste von " + client.getUserName() + " ist");
+				log.debug("Loeschen nicht moeglich, da Client " + userName + " noch in der Warteliste von "
+						+ client.getUserName() + " ist");
 				return false;
 			}
 		}
@@ -218,7 +217,7 @@ public class SharedChatClientList {
 	 * Loescht einen Client zwangsweise inkl. aller EintrÃ¤ge in Wartelisten.
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 */
 	public synchronized void deleteClientWithoutCondition(String userName) {
 
@@ -236,48 +235,43 @@ public class SharedChatClientList {
 		// Client kann nun entfernt werden
 		clients.remove(userName);
 		log.debug("Client  " + userName + " vollstaendig aus allen Wartelisten entfernt");
-		
-	}
-	
-	// JA: Methode die die WaitListSSSS zurück gibt die den einen Client noch enthalten
-	//author : LS, AG
 
-	/**
-	 * Sucht einen Client in allen Waitlists
-	 * 
-	 * @param userName
-	 * 			gesuchter Client
-	 * @return
-	 * 			Waitlists mit dem gesuchten Client
-	 */
-	public synchronized HashSet<String> getWaitLists(String userName) {
-		HashSet<String> waitLists = new HashSet<String>();
-		for (String s : new HashSet<String>(clients.keySet())) {
-			ClientListEntry client = (ClientListEntry) clients.get(s);
-			if (client.getWaitList().contains(userName)) {
-				
-				waitLists.add(client.getUserName());
-			}
-		}
-
-		return waitLists;
 	}
-	
+
+// Methode für komplexen Logout
+//	/**
+//	 * Sucht einen Client in allen Waitlists
+//	 * 
+//	 * @param userName
+//	 *            gesuchter Client
+//	 * @return Waitlists, in denen der Client enthalten ist
+//	 */
+//	public synchronized HashSet<String> getWaitLists(String userName) {
+//		HashSet<String> waitLists = new HashSet<String>();
+//		for (String s : new HashSet<String>(clients.keySet())) {
+//			ClientListEntry client = (ClientListEntry) clients.get(s);
+//			if (client.getWaitList().contains(userName)) {
+//
+//				waitLists.add(client.getUserName());
+//			}
+//		}
+//
+//		return waitLists;
+//	}
 
 	/**
 	 * Entfernt einen Client aus der Clientliste. Der Client darf nur geloescht
 	 * werden, wenn er nicht mehr in der Warteliste eines anderen Client ist.
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @return true bei erfolgreichem Loeschen, sonst false
 	 */
 	public synchronized boolean deleteClient(String userName) {
 
 		log.debug("Clientliste vor dem Loeschen von " + userName + ": " + printClientList());
-		log.debug(
-				"Logout fuer " + userName + ", Laenge der Clientliste vor dem Loeschen von: "
-						+ userName + ": " + clients.size());
+		log.debug("Logout fuer " + userName + ", Laenge der Clientliste vor dem Loeschen von: " + userName + ": "
+				+ clients.size());
 
 		boolean deletedFlag = false;
 		ClientListEntry removeCandidateClient = (ClientListEntry) clients.get(userName);
@@ -285,8 +279,7 @@ public class SharedChatClientList {
 
 			// Event-Warteliste des Clients leer?
 			log.debug("Laenge der Clientliste " + userName + ": " + clients.size());
-			if ((removeCandidateClient.getWaitList().size() == 0)
-					&& (removeCandidateClient.isFinished())) {
+			if ((removeCandidateClient.getWaitList().size() == 0) && (removeCandidateClient.isFinished())) {
 
 				// Warteliste leer, jetzt pruefen, ob er noch in anderen
 				// Wartelisten ist
@@ -296,8 +289,8 @@ public class SharedChatClientList {
 				for (String s : new HashSet<String>(clients.keySet())) {
 					ClientListEntry client = (ClientListEntry) clients.get(s);
 					if (client.getWaitList().contains(userName)) {
-						log.debug("Loeschen nicht moeglich, da Client " + userName
-								+ " noch in der Warteliste von " + s + " ist");
+						log.debug("Loeschen nicht moeglich, da Client " + userName + " noch in der Warteliste von " + s
+								+ " ist");
 						return deletedFlag;
 					}
 				}
@@ -309,8 +302,7 @@ public class SharedChatClientList {
 			}
 		}
 
-		log.debug("Laenge der Clientliste nach dem Loeschen von " + userName + ": "
-				+ clients.size());
+		log.debug("Laenge der Clientliste nach dem Loeschen von " + userName + ": " + clients.size());
 		log.debug("Clientliste nach dem Loeschen von " + userName + ": " + printClientList());
 		return deletedFlag;
 	}
@@ -341,8 +333,7 @@ public class SharedChatClientList {
 				}
 			}
 			if (!clientUsed) {
-				log.debug("Garbace Collection: Client " + client1.getUserName()
-						+ " wird aus ClientListe entfernt");
+				log.debug("Garbace Collection: Client " + client1.getUserName() + " wird aus ClientListe entfernt");
 				deletedClients.add(s1);
 				clients.remove(s1);
 			}
@@ -361,11 +352,10 @@ public class SharedChatClientList {
 	}
 
 	/**
-	 * Erhoeht den Zaehler fuer empfangene Chat-Event-Confirm-PDUs fuer einen
-	 * Client
+	 * Erhoeht den Zaehler fuer empfangene Chat-Event-Confirm-PDUs fuer einen Client
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 */
 	public synchronized void incrNumberOfReceivedChatEventConfirms(String userName) {
 
@@ -380,7 +370,7 @@ public class SharedChatClientList {
 	 * Erhoeht den Zaehler fuer gesendete Chat-Event-PDUs fuer einen Client
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 */
 	public synchronized void incrNumberOfSentChatEvents(String userName) {
 
@@ -394,7 +384,7 @@ public class SharedChatClientList {
 	 * Erhoeht den Zaehler fuer empfangene Chat-Message-PDUs eines Client
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 */
 	public synchronized void incrNumberOfReceivedChatMessages(String userName) {
 
@@ -408,7 +398,7 @@ public class SharedChatClientList {
 	 * Setzt die Ankunftszeit eines Chat-Requests fuer die Serverzeitmessung
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 */
 
 	public synchronized void setRequestStartTime(String userName, long startTime) {
@@ -416,8 +406,7 @@ public class SharedChatClientList {
 		ClientListEntry client = clients.get(userName);
 		if (client != null) {
 			client.setStartTime(startTime);
-			log.debug(
-					"Startzeit fuer Benutzer " + userName + " gesetzt: " + client.getStartTime());
+			log.debug("Startzeit fuer Benutzer " + userName + " gesetzt: " + client.getStartTime());
 		} else {
 			log.debug("Startzeit fuer Benutzer konnte nicht gesetzt werden:" + userName);
 		}
@@ -427,7 +416,7 @@ public class SharedChatClientList {
 	 * Liefert die Ankunftszeit eines Chat-Requests
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @return Ankunftszeit des Requests in ns
 	 */
 	public synchronized long getRequestStartTime(String userName) {
@@ -441,12 +430,12 @@ public class SharedChatClientList {
 	}
 
 	/**
-	 * Erstellt eine Liste aller Clients, die noch ein Event bestaetigen muessen.
-	 * Es werden nur registrierte und sich in Registrierung befindliche Clients
+	 * Erstellt eine Liste aller Clients, die noch ein Event bestaetigen muessen. Es
+	 * werden nur registrierte und sich in Registrierung befindliche Clients
 	 * ausgewaehlt.
 	 * 
 	 * @param userName
-	 *          Id des Clients, fuer den eine Warteliste erstellt werden soll
+	 *            Id des Clients, fuer den eine Warteliste erstellt werden soll
 	 * 
 	 * @return Referenz auf Warteliste des Clients
 	 */
@@ -474,7 +463,7 @@ public class SharedChatClientList {
 	 * Loescht eine Event-Warteliste fuer einen Client
 	 * 
 	 * @param userName
-	 *          Name des Clients, fuer den die Liste geloesccht werden soll
+	 *            Name des Clients, fuer den die Liste geloesccht werden soll
 	 */
 	public synchronized void deleteWaitList(String userName) {
 
@@ -488,18 +477,17 @@ public class SharedChatClientList {
 	 * Loescht einen Eintrag aus der Event-Warteliste
 	 * 
 	 * @param userName
-	 *          Name des Clients, fuer den ein Listeneintrag aus seiner Warteliste
-	 *          geloescht werden soll
+	 *            Name des Clients, fuer den ein Listeneintrag aus seiner Warteliste
+	 *            geloescht werden soll
 	 * @param entryName
-	 *          name des Clients, der aus der Event-Warteliste geloescht werden
-	 *          soll
+	 *            name des Clients, der aus der Event-Warteliste geloescht werden
+	 *            soll
 	 * @return Anzahl der noch vorhandenen Eintraege in der Liste
 	 * @throws Exception
-	 *           Eintrag, der geloescht werden sollte, ist nicht vorhanden
+	 *             Eintrag, der geloescht werden sollte, ist nicht vorhanden
 	 */
 
-	public synchronized int deleteWaitListEntry(String userName, String entryName)
-			throws Exception {
+	public synchronized int deleteWaitListEntry(String userName, String entryName) throws Exception {
 
 		log.debug("Client: " + userName + ", aus Warteliste von " + entryName + " loeschen ");
 
@@ -513,8 +501,7 @@ public class SharedChatClientList {
 			return 0;
 		} else {
 			client.getWaitList().remove(entryName);
-			log.debug("Eintrag fuer " + entryName + " aus der Warteliste von " + userName
-					+ " geloescht");
+			log.debug("Eintrag fuer " + entryName + " aus der Warteliste von " + userName + " geloescht");
 			return client.getWaitList().size();
 		}
 	}
@@ -523,7 +510,7 @@ public class SharedChatClientList {
 	 * Liefert die Laenge der Event-Warteliste fuer einen Client
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 * @return Anzahl der noch vorhandenen Eintraege in der Liste
 	 */
 	public synchronized int getWaitListSize(String userName) {
@@ -539,7 +526,7 @@ public class SharedChatClientList {
 	 * Setzt Kennzeichen, dass die Arbeit fuer einen User eingestellt werden kann
 	 * 
 	 * @param userName
-	 *          Name des Clients
+	 *            Name des Clients
 	 */
 	public synchronized void finish(String userName) {
 
@@ -571,6 +558,5 @@ public class SharedChatClientList {
 		}
 		return stringBuilder.toString();
 	}
-	
-	
+
 }
