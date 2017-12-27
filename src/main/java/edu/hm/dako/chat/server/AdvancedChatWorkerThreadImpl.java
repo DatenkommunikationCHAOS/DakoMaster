@@ -681,19 +681,19 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 					// mehr Sinn macht als da oben
 					try {
 						Thread.sleep(1000);
-						log.debug("Zeit ist abgelaufen! Logout-Response an " + receivedPdu.getEventUserName() + "wird abgeschickt!");
-						sendLogoutResponse(receivedPdu.getEventUserName());
-						log.debug(clients.getClientNameList()); //AG
-						clients.changeClientStatus(receivedPdu.getEventUserName(), ClientConversationStatus.UNREGISTERED); //AG geändert in eventusername von userName
+						log.debug("Zeit ist abgelaufen!");
 						
-						clients.finish(receivedPdu.getEventUserName());
-						log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
-								+ clients.size());	
 					} catch (Exception e) {
 						ExceptionHandler.logException(e);
 					}
 					
-					
+					clients.changeClientStatus(receivedPdu.getEventUserName(), ClientConversationStatus.UNREGISTERED); 
+						
+					sendLogoutResponse(receivedPdu.getEventUserName());
+						
+					clients.finish(receivedPdu.getEventUserName());
+					log.debug("Laenge der Clientliste beim Vormerken zum Loeschen von " + receivedPdu.getUserName() + ": "
+								+ clients.size());	
 					// JA auskommentiert
 //					// Logout Response senden
 //						sendLogoutResponse(receivedPdu.getEventUserName());
