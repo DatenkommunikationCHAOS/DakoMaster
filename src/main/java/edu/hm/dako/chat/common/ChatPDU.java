@@ -411,6 +411,7 @@ public class ChatPDU implements Serializable {
 	public static ChatPDU createChatMessageResponsePdu(String eventInitiator, long numberOfSentEvents,
 			long numberOfLostEventConfirms, long numberOfReceivedEventConfirms, long numberOfRetries,
 			long numberOfReceivedChatMessages, String clientThreadName, long serverTime) {
+		// JA noch in die Klamma ChatPDU receivedPdu
 
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.CHAT_MESSAGE_RESPONSE);
@@ -419,6 +420,8 @@ public class ChatPDU implements Serializable {
 		pdu.setClientThreadName(clientThreadName);
 		pdu.setEventUserName(eventInitiator);
 		pdu.setUserName(eventInitiator);
+		
+//		pdu.setMessage(receivedPdu.getMessage()); // JA
 
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 
@@ -458,21 +461,39 @@ public class ChatPDU implements Serializable {
 	}
 
 	// AL neue Confirm PDU erstellen
-
+	/**
+	 * Erzeugen einer Chat-Message-Confirm-PDU
+	 * @param username
+	 * 			Login-Namen des Clients
+	 * @param receivedPdu
+	 * 			empfangene PDU
+	 * @return
+	 * 			Erzeugte PDU
+	 */
 	public static ChatPDU createMessageConfirmPdu(String username, ChatPDU receivedPdu) {
 		ChatPDU pdu = new ChatPDU();
-		pdu.setPduType(PduType.CHAT_MESSAGE_RESPONSE_CONFIRM);
+		pdu.setPduType(PduType.CHAT_MESSAGE_CONFIRM);
 		pdu.setClientThreadName(Thread.currentThread().getName());
 		pdu.setServerThreadName(receivedPdu.getServerThreadName());
 		pdu.setUserName(username);
 		pdu.setClientStatus(ClientConversationStatus.REGISTERED);
 		pdu.setEventUserName(receivedPdu.getEventUserName());
+		pdu.setMessage(receivedPdu.getMessage()); // JA
 		return pdu;
 
 	}
 
 	// Methode für Login und Logout
 	// AG
+	/**
+	 *  Erzeugen einer Login-Event-Confirm-PDU
+	 * @param username
+	 * 			Login-Namen des Clients
+	 * @param receivedPdu
+	 * 			empfangene PDU
+	 * @return
+	 * 			Erzeugte PDU
+	 */
 	public static ChatPDU createLoginEventConfirm(String username, ChatPDU receivedPdu) {
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.LOGIN_CONFIRM);
@@ -484,7 +505,18 @@ public class ChatPDU implements Serializable {
 		return pdu;
 
 	}
+	
+	
 	//AG
+	/**
+	 * Erzeugen einer Logout-Event-Confirm-PDU
+	 * @param username
+	 * 			Login-Namen des Clients
+	 * @param receivedPdu
+	 * 			empfangene PDU
+	 * @return
+	 * 			erzeugte PDU
+	 */
 	public static ChatPDU createLogoutEventConfirm(String username, ChatPDU receivedPdu) {
 		ChatPDU pdu = new ChatPDU();
 		pdu.setPduType(PduType.LOGOUT_CONFIRM);

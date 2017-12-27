@@ -16,7 +16,8 @@ public enum PduType {
     CHAT_MESSAGE_EVENT(7, "Chat-Message-Event"),
     LOGIN_EVENT(8, "Login-Event"),
     LOGOUT_EVENT(9, "Logout-Event"),
-    CHAT_MESSAGE_RESPONSE_CONFIRM(10, "Confirm Event"),
+    CHAT_MESSAGE_CONFIRM(10, "Chat-Message-Confirm"), //JA:"Confirm Event" in "Chat-Message-Confirm"
+    // und von CHAT_MESSAGE_RESPONSE_CONFIRM in CHAT_MESSAGE_CONFIRM geändert
 	LOGOUT_CONFIRM(11, "Logout-Confirm-Event"),
 	LOGIN_CONFIRM(12,"Login-Confirm-Event");
 	
