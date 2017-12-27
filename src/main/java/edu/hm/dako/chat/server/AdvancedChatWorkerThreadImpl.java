@@ -67,7 +67,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
 		Vector<String> clientList2 = clients.getClientNameList();
 		
-		// Login- oder Logout-Event-PDU an alle aktiven Clients senden AJ
+		// Login- oder Logout-Event-PDU an alle aktiven Clients senden
 		for (String s : new Vector<String>(clientList2)) {
 			log.debug("Fuer " + s + " wird Login- oder Logout-Event-PDU an alle aktiven Clients gesendet");
 
