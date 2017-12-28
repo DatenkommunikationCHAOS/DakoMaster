@@ -138,7 +138,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 	protected void logoutRequestAction(ChatPDU receivedPdu) {
 		log.debug("Empfangene Pdu " + receivedPdu);
 		ChatPDU pdu;
-		// LogoutCounter für Benchmarking erhöhen
+		// Counter für Benchmarking erhöhen
 		logoutCounter.getAndIncrement();
 		log.debug("Logout-Request von " + receivedPdu.getUserName() + "empfangen" + ", LogoutCount = "
 				+ logoutCounter.get());
@@ -191,7 +191,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 						pdu.setUserName(client.getUserName());
 						client.getConnection().send(pdu);
 						log.debug("Chat-Event-PDU an " + client.getUserName() + " gesendet");
-						// Event Counter für Benchmarking erhöhen
+						// Counter für Benchmarking erhöhen
 						clients.incrNumberOfSentChatEvents(client.getUserName());
 						eventCounter.getAndIncrement();
 						log.debug(userName + ": EventCounter erhoeht = " + eventCounter.get()
@@ -342,10 +342,11 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 				}
 				// Komplexer Logout: Implementierungsansatz für folgenden Fall: Client meldet
 				// sich ab, obwohl er noch in einer Waitlist enthalten ist
+				// Verwendung von eigener auskommentierter Methode getWaitLists in SharedChatClientData
 			} else {
 
 				// if (clients.deletable(receivedPdu.getUserName())== false){
-				// HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName());
+				// HashSet<String> waitList = clients.getWaitLists(receivedPdu.getUserName()); 
 				// clients.deleteClientWithoutCondition(receivedPdu.getUserName());
 				// for (String s: waitList) {
 				// if (clients.getWaitListSize(s) == 0) {
@@ -523,7 +524,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 		log.debug("so viele Confirms" + confirmCounter + "werden gesendet");
 
 		try {
-			// löscht Client, der Nachricht bestätigt hat, aus der WArteliste raus
+			// löscht Client, der Nachricht bestätigt hat, aus der Warteliste raus
 			clients.deleteWaitListEntry(receivedPdu.getEventUserName(), userName);
 
 			// Überprüfen, ob Wartelistegröße 0 ist
