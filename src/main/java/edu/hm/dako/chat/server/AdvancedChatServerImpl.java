@@ -38,7 +38,8 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
      * @param serverGuiInterface
      */
     public AdvancedChatServerImpl(ExecutorService executorService,
-            ServerSocketInterface socket, ChatServerGuiInterface serverGuiInterface) {
+            ServerSocketInterface socket,
+            ChatServerGuiInterface serverGuiInterface) {
         log.debug("AdvancedChatServerImpl konstruiert");
         this.executorService = executorService;
         this.socket = socket;
@@ -57,7 +58,8 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
                 // Clientliste erzeugen
                 clients = SharedChatClientList.getInstance();
 
-                while (!Thread.currentThread().isInterrupted() && !socket.isClosed()) {
+                while (!Thread.currentThread().isInterrupted()
+                        && !socket.isClosed()) {
                     try {
                         // Auf ankommende Verbindungsaufbauwuensche warten
                         System.out.println(
@@ -67,14 +69,16 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
                         log.debug("Neuer Verbindungsaufbauwunsch empfangen");
 
                         // Neuen Workerthread starten
-                        executorService.submit(new AdvancedChatWorkerThreadImpl(connection, clients,
-                                counter, serverGuiInterface));
+                        executorService.submit(
+                                new AdvancedChatWorkerThreadImpl(connection,
+                                        clients, counter, serverGuiInterface));
                     } catch (Exception e) {
                         if (socket.isClosed()) {
                             log.debug("Socket wurde geschlossen");
                         } else {
                             log.error(
-                                    "Exception beim Entgegennehmen von Verbindungsaufbauwuenschen: " + e);
+                                    "Exception beim Entgegennehmen von Verbindungsaufbauwuenschen: "
+                                            + e);
                             ExceptionHandler.logException(e);
                         }
                     }
@@ -98,11 +102,12 @@ public class AdvancedChatServerImpl extends AbstractChatServer {
             try {
                 if (client != null) {
                     client.getConnection().close();
-                    log.error("Verbindung zu Client " + client.getUserName() + " geschlossen");
+                    log.error("Verbindung zu Client " + client.getUserName()
+                            + " geschlossen");
                 }
             } catch (Exception e) {
-                log.debug(
-                        "Fehler beim Schliessen der Verbindung zu Client " + client.getUserName());
+                log.debug("Fehler beim Schliessen der Verbindung zu Client "
+                        + client.getUserName());
                 ExceptionHandler.logException(e);
             }
         }
