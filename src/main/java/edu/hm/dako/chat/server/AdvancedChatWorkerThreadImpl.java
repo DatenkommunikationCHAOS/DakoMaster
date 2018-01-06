@@ -169,7 +169,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
             // LogoutEventPdu erstellen
             pdu = ChatPDU.createLogoutEventPdu(userName, clientList,
                     receivedPdu);
-            log.debug("Erstellte Pdu " + pdu); 
+            log.debug("Erstellte Pdu " + pdu);
             // Status des Clients ändern in Unregistering
             clients.changeClientStatus(receivedPdu.getUserName(),
                     ClientConversationStatus.UNREGISTERING);
@@ -308,7 +308,7 @@ public class AdvancedChatWorkerThreadImpl extends AbstractWorkerThread {
 
         ClientListEntry client;
 
-        // Worker-Thread beenden, wenn sein Client schon abgemeldet ist
+        // Worker-Thread beenden, wenn der entsprechende Client schon abgemeldet ist
         if (userName != null) {
             client = clients.getClient(userName);
             if (client != null) {
